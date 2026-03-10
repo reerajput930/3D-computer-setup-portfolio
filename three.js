@@ -119,6 +119,12 @@ function finishLoading() {
 
 
 const loader = new GLTFLoader(loadingManager)
+
+
+// draco for loading
+const dracoLoader = new DRACOLoader(loadingManager);
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/'); 
+loader.setDRACOLoader(dracoLoader);
 // declaring globally
 let object;
 
