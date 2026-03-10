@@ -125,7 +125,7 @@ function finishLoading() {
 }
 
 
-const loader = new GLTFLoader()
+const loader = new GLTFLoader(loadingManager)
 // declaring globally
 let object;
 

@@ -83,6 +83,8 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+
 #lastline{
  position: fixed;
  bottom: 25px;
