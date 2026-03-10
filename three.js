@@ -129,7 +129,7 @@ loader.load(url, (gltf) => {
 
     scene.add(object)           // Add GLB model to the scene
     gltf.scene.position.set(0, 0, 0) // Position it in the center
-    object.rotation.y = 0
+    object.rotation.y = -3
     object.position.y = -1
     // object.position.x = -.5
     object.position.z = -1
