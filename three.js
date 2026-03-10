@@ -96,7 +96,7 @@ const loader = new GLTFLoader()
 // declaring globally
 let object;
 
-const url = './just_checkingglb.glb'
+const url = '/just_checkingglb.glb'
 // load the item in three.js
 loader.load(url, (gltf) => {
     object = gltf.scene
