@@ -192,7 +192,7 @@ controls.zoomSpeed = 0.7;
 setTimeout(()=>{
  controls.autoRotate = false;
  console.log("i am activated")
-},15000)
+},8000)
  
 
 // after loading the item, time to show on browser with render 
