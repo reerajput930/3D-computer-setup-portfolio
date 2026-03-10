@@ -6,6 +6,38 @@ import { AxesHelper } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { LoadingManager } from 'three'
 
+const progressText = document.getElementById('progress-text');
+
+// Function to update progress (0 to 100)
+function updateProgress(percent) {
+  console.log("safepercent",percent)
+  const safePercent = Math.min(100, Math.max(0, percent));
+  progressText.textContent = Math.round(safePercent) + '%';
+}
+
+function finishLoadingPercent() {
+  // Jump to 100% in case it didn't reach exactly
+  updateProgress(100);
+  
+}
+const loadingManager = new THREE.LoadingManager();
+
+
+loadingManager.onProgress = (url, loaded, total) => {
+  if (total > 0) {
+    const percent = (loaded / total) * 100;
+    updateProgress(percent);
+  }
+};
+
+loadingManager.onLoad = () => {
+  finishLoadingPercent();
+};
+
+loadingManager.onError = (url) => {
+  progressText.textContent = 'Error';
+  console.error('Loading error:', url);
+};
 
 //  important aspect, scene,canva,loader camera and render
 
@@ -109,6 +141,8 @@ loader.load(url, (gltf) => {
     object.position.z = -1
     console.log('loader working fine')
     finishLoading();
+        finishLoadingPercent()
+
 
 },(progress)=>{
 if (progress.lengthComputable) {

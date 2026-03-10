@@ -86,4 +86,5 @@
 #lastline{
  position: fixed;
  bottom: 25px;
+ display: flex;
 }
