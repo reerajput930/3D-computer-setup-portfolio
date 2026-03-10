@@ -112,16 +112,9 @@ typeNextChar();
 // ───────────────────────────────────────────────
 // Call this when your real loading is 100% done (e.g. from LoadingManager.onLoad)
 function finishLoading() {
-  // Optional: finish typing faster or show final message
-  codeLines.innerHTML += '<br>> Access granted. Initiating immersion...<br>';
   
-  // Fade out the terminal
-  terminal.classList.add('hidden');
-  
-  // Remove from DOM after fade
-  setTimeout(() => {
     terminal.style.display = 'none';
-  }, 900);
+  
 }
 
 
@@ -142,7 +135,8 @@ loader.load(url, (gltf) => {
     object.position.z = -1
     console.log('loader working fine')
     finishLoading();
-        finishLoadingPercent()
+    finishLoadingPercent()
+    console.log("screen got hidden")
 
 
 },(progress)=>{
@@ -198,7 +192,7 @@ controls.zoomSpeed = 0.7;
 setTimeout(()=>{
  controls.autoRotate = false;
  console.log("i am activated")
-},10000)
+},15000)
  
 
 // after loading the item, time to show on browser with render 
