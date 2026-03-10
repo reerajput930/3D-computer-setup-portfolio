@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">    
+<title>REE'</title>
+  </head>
+  <style>
+    body {
+      margin: 0px;
+      padding: 0px;
+      background-image: url(./photo_stocks/universe.jpeg);
+      background-size: cover;
+      background-position: center;
+      /* background-repeat: no-repeat; */
+    }
+    .cubeCanvas {
+      position: absolute;
+
+    }
+    .left_details{
+        margin-top: 4rem;
+        margin-left: 5rem;
+            position: fixed;
+    /* z-index: 9999; */
+    display: flex;
+    justify-content: left;
+    /* align-items: center; */
+    flex-direction: column;
+    z-index: 9;
+    }
+    div{
+        color:white;
+        font-family: "Orbitron", sans-serif;
+        
+    font-weight: bolder;
+    letter-spacing: 5px;
+    }
+    #name{
+        font-size: 25px;
+       
+    font-size: 3rem;
+    
+    }
+    #time{
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+    #mu_cl{
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+    img{
+        height: 2rem;
+    }
+    #music{
+        margin-right: 15px;
+    border: 2px solid white;
+    background: white;
+    border-radius: 5px;
+    padding: 2px 1px 1px 2px;
+
+    }
+    #music:hover{
+        cursor: pointer;
+    }
+    #click:hover{
+        cursor: pointer;
+    }
+    #click{
+         margin-right: 15px;
+    border: 2px solid white;
+    background: white;
+    border-radius: 5px;
+    padding: 2px 1px 1px 2px;
+
+    }
+    .right_details{
+            position:fixed;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            margin-top: 6rem;
+            margin-right: .5rem;
+            z-index: 10;
+            justify-content: right;
+    align-items: end;
+    }
+    .right_details div{
+      margin-top: 8px;
+    }
+   #code-lines{
+    color: white;
+        font-weight: 200;
+    letter-spacing: 5px;
+    font-size: small;
+
+   }
+   @media (max-width: 600px) {
+     .left_details{
+        margin-top: 1rem;
+        margin-left: 1rem;
+        position: fixed;
+     }
+      div{
+           font-size: 13px;
+        
+    font-weight:bold;
+    letter-spacing: 3px;
+    }
+    .right_details {
+      bottom: 2rem;
+    }
+    #name{
+      font-size: 2rem;
+    }
+  }
+  </style>
+  <body>
+
+
+    <audio autoplay id="mySong" loop>
+    <!-- <source src="BIRDS OF A FEATHER - Billie Eilish free mp3.mp3" type="audio/mpeg"> -->
+    Your browser doesn't support audio.
+   </audio>
+
+   <div id="loading-terminal">
+  <div class="terminal-window">
+    <div class="header">
+      <span class="title">onboarding.exe</span>
+    </div>
+    <div class="body">
+      <div id="code-lines">  <div id="detail-riya">
+      <div style="font-family: sans-serif;">Riya,    &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; Released: 2026 </div>
+      <div style="font-family: sans-serif;">Ree,     &nbsp;  &nbsp;&nbsp; &nbsp;&nbsp; HHBIOS (C)2026 Riya Inc.,</div>
+      <br/>
+      
+      <div style="font-family: sans-serif;">HSP S13 2026-2028 Special UC131S</div>
+      <div style="font-family: sans-serif;">HSP Showcase(tm) XX 113</div> 
+      <div style="font-family: sans-serif;">Location detected: Toronto ON</div> 
+      <br/>
+      
+      <div>Initializing neural interface...</div> 
+    </div>
+    
+    </div>
+    <div  style="font-family: sans-serif;" id="lastline">Human onboarding.............</div> 
+    
+    </div>
+  </div>
+</div>
+
+    <div class="left_details">
+      <div id="name">RIYA</div>
+      <div>ONTARIO, CANADA 🍁</div>
+      <div id="time">
+        <div style="margin-right: 15px;"></div>
+        <div style="margin-right: 15px;"></div>
+        <div></div>
+      </div>
+      <div id="mu_cl">
+        <div id="music" style="margin-right: 15px;" >
+
+            <img src="./photo_stocks/music-note-icon-34255.png" alt="music">
+        </div>
+        <div id="click">
+             <img src="./photo_stocks/mouse-right-click-icon-15089.png" alt="mouse">
+
+        </div>
+      </div>
+    </div>
+    <div class="right_details">
+      <div>UI/UX DESIGNER</div>
+      <div>DEVELOPER</div>
+      <div>3D INTERACTION ARTIST</div>
+      <div>CONTENT CREATOR(2.5K)</div>
+
+    </div>
+
+
+
+    <canvas class="cubeCanvas"></canvas>
+    <script type="module" src="./three.js"></script>
+    <script>
+setInterval(() => {
+  const parts = new Date().toLocaleString('en-US', {
+    hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
+    weekday: 'long', year: 'numeric'
+  }).split(', ');
+  document.querySelectorAll('#time div')[0].textContent = parts[0];      // 14:35:22
+  document.querySelectorAll('#time div')[1].textContent = parts[1];      // Wednesday
+  document.querySelectorAll('#time div')[2].textContent = parts[2];      // 2025
+}, 1000);
+
+
+// for the music
+  const audio = document.getElementById("mySong");
+
+  audio.volume = 0.3;   // start at 40%
+  document.body.addEventListener('click', () => {
+    document.getElementById('mySong').play();
+  }, { once: true });   // only needs one click, then removes listener
+  
+
+  const btn   = document.getElementById("music");
+
+  btn.addEventListener("click", () => {
+    if (audio.volume === 0) {
+      // turn sound back on
+      audio.volume = previousVolume;
+      btn.classList.remove("muted");
+    } else {
+      // mute (volume = 0) but keep playing
+      previousVolume = audio.volume;   // remember current level
+      audio.volume = 0;
+      btn.classList.add("muted");
+    }
+  });
+
+  // script for loading
+
+</script>
+  </body>
+</html>
