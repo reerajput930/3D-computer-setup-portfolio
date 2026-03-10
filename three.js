@@ -7,7 +7,6 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { LoadingManager } from 'three'
 
 
-
 //  important aspect, scene,canva,loader camera and render
 
 const scene = new THREE.Scene()
@@ -97,7 +96,7 @@ const loader = new GLTFLoader()
 // declaring globally
 let object;
 
-const url = 'just_checkingglb.glb'
+const url = './just_checkingglb.glb'
 // load the item in three.js
 loader.load(url, (gltf) => {
     object = gltf.scene
