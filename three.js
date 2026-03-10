@@ -70,7 +70,8 @@ const fakeCodeSnippets = [
    "> Compiling reality shaders   - Glow intensity: high",
    "> Mounting virtual desk assets...",
   "  - Ring light calibration [COMPLETE]",
-  "> System ready. Enjoy the view."
+  "> System getting ready, fasten your seat belt.........",
+  "> Access granted. Initiating immersion......"
 ];
 
 // Typing animation settings
