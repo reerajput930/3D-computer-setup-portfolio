@@ -10,9 +10,9 @@ const progressText = document.getElementById('progress-text');
 
 // Function to update progress (0 to 100)
 function updateProgress(percent) {
-  console.log("safepercent",percent)
-  const safePercent = Math.min(100, Math.max(0, percent));
-  progressText.textContent = Math.round(safePercent) + '%';
+  // console.log("safepercent",percent)
+  // const safePercent = Math.min(100, Math.max(0, percent));
+  progressText.textContent = Math.round(percent) + '%';
 }
 
 function finishLoadingPercent() {
@@ -150,7 +150,7 @@ if (progress.lengthComputable) {
       
       const percent = Math.round((progress.loaded / progress.total) * 100);
     console.log(`Loading: ${percent}%`);
-     
+      updateProgress(percent);
     }
 }, undefined, (error) => {
     console.error('Error loading GLB', error)
