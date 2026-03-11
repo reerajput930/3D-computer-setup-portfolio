@@ -1,3 +1,6 @@
-#portfolio is in progress....
+# portfolio is in working progress....
+# Making the main pc interactive
 
-[<image-card alt="Demo" src="thumbnail.jpg" ></image-card>](https://www.youtube.com/shorts/CJNvBU1Q5KE)
+https://github.com/user-attachments/assets/ff53c99e-9ebd-4ea1-a374-23c68f9566ac
+
+
