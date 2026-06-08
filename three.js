@@ -127,6 +127,19 @@ dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5
 loader.setDRACOLoader(dracoLoader);
 // declaring globally
 let object;
+let wallPlaneMesh = null;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Camera fly-to-wall animation
+let isAnimatingToWall = false;
+const wallCamDest    = new THREE.Vector3(4.5, 0.5, 0.5);
+const wallTargetDest = new THREE.Vector3(0.687, -0.126, 0.193);
+
+window.goToWall = function() {
+  isAnimatingToWall = true;
+  controls.autoRotate = false;
+};
 
 const url = '/just_checkingglb.glb'
 // load the item in three.js
@@ -142,7 +155,120 @@ loader.load(url, (gltf) => {
     console.log('loader working fine')
     finishLoading();
     finishLoadingPercent()
-    console.log("screen got hidden")
+
+    // build win95 desktop canvas texture for back wall
+    const wc = document.createElement('canvas');
+    wc.width = 1024; wc.height = 1024;
+    const ctx = wc.getContext('2d');
+
+    // desktop background fills entire canvas
+    ctx.fillStyle = '#008080';
+    ctx.fillRect(0, 0, wc.width, wc.height);
+
+    // large centered portfolio window
+    const wx = 120, wy = 80, ww = 780, wh = 700;
+    // window shadow
+    ctx.fillStyle = '#005555';
+    ctx.fillRect(wx + 6, wy + 6, ww, wh);
+    // window body
+    ctx.fillStyle = '#c0c0c0';
+    ctx.fillRect(wx, wy, ww, wh);
+    // title bar
+    ctx.fillStyle = '#000080';
+    ctx.fillRect(wx + 2, wy + 2, ww - 4, 36);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Riya  -  Portfolio 2026', wx + 12, wy + 26);
+    // window control buttons
+    [[ww - 24, '×'], [ww - 48, '□'], [ww - 72, '_']].forEach(([bx, sym]) => {
+      ctx.fillStyle = '#c0c0c0';
+      ctx.fillRect(wx + bx, wy + 6, 20, 22);
+      ctx.fillStyle = '#808080';
+      ctx.strokeStyle = '#808080';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(wx + bx, wy + 6, 20, 22);
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(sym, wx + bx + 10, wy + 22);
+    });
+    // white content area
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(wx + 4, wy + 40, ww - 8, wh - 44);
+
+    // portfolio content inside window
+    ctx.fillStyle = '#000080';
+    ctx.font = 'bold 72px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('RIYA', wx + ww / 2, wy + 160);
+
+    ctx.fillStyle = '#444444';
+    ctx.font = '26px Arial';
+    ctx.fillText('UI/UX Designer  •  Developer  •  3D Artist', wx + ww / 2, wy + 210);
+
+    ctx.fillStyle = '#aaaaaa';
+    ctx.fillRect(wx + 60, wy + 228, ww - 120, 2);
+
+    // nav links
+    ['ABOUT', 'PROJECTS', 'SKILLS', 'CONTACT'].forEach((item, i) => {
+      ctx.fillStyle = '#0000cc';
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(item, wx + 130 + i * 175, wy + 310);
+      ctx.fillStyle = '#0000cc';
+      ctx.fillRect(wx + 130 + i * 175 - 38, wy + 316, 76, 2);
+    });
+
+    ctx.fillStyle = '#888888';
+    ctx.font = '20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText("Coding with Ree'  •  Ontario, Canada", wx + ww / 2, wy + 640);
+
+    // left desktop icons
+    ['Projects', 'About', 'Skills', 'Contact'].forEach((label, i) => {
+      const ix = 18, iy = 60 + i * 160;
+      ctx.fillStyle = '#c0c0c0';
+      ctx.fillRect(ix, iy, 88, 68);
+      ctx.fillStyle = '#000080';
+      ctx.fillRect(ix + 5, iy + 5, 78, 44);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, ix + 44, iy + 88);
+    });
+
+    // taskbar
+    const tbH = 56;
+    ctx.fillStyle = '#c0c0c0';
+    ctx.fillRect(0, wc.height - tbH, wc.width, tbH);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, wc.height - tbH, wc.width, 2);
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('> Start', 14, wc.height - 18);
+    ctx.textAlign = 'right';
+    ctx.fillText('12:27 PM', wc.width - 14, wc.height - 18);
+
+    const wallTexture = new THREE.CanvasTexture(wc);
+    wallTexture.repeat.set(-1, 1);
+    wallTexture.offset.set(1, 0);
+
+    object.traverse((child) => {
+      if (child.name === 'Cube019_Baked_Baked') {
+        const wallPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(3.8, 3.753),
+          new THREE.MeshBasicMaterial({ map: wallTexture, side: THREE.DoubleSide })
+        );
+
+        // exact world center from console + push slightly toward camera
+        wallPlane.position.set(0.687, -0.126, -0.2);
+        wallPlane.rotation.y = object.rotation.y + Math.PI / 2;
+        scene.add(wallPlane);
+        wallPlaneMesh = wallPlane;
+      }
+    });
 
 
 },(progress)=>{
@@ -211,17 +337,42 @@ renderer.setSize(width, height)
    
 
 const renderloop = () => {
- 
-  requestAnimationFrame(renderloop) // loop continuously
 
+  requestAnimationFrame(renderloop)
 
-   
+  if (isAnimatingToWall) {
+    camera.position.lerp(wallCamDest, 0.04);
+    controls.target.lerp(wallTargetDest, 0.04);
+    if (camera.position.distanceTo(wallCamDest) < 0.08) {
+      isAnimatingToWall = false;
+    }
+  }
 
   renderer.render(scene, camera)
-  
-
-controls.update();
+  controls.update();
 }
 renderloop()
 
 console.log(renderer)
+
+// Click the back wall → open portfolio overlay
+canva.addEventListener('click', (e) => {
+  if (!wallPlaneMesh) return;
+  const rect = canva.getBoundingClientRect();
+  mouse.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+  mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  if (raycaster.intersectObject(wallPlaneMesh).length > 0) {
+    document.getElementById('portfolio-overlay').style.display = 'flex';
+  }
+});
+
+// Pointer cursor when hovering wall
+canva.addEventListener('mousemove', (e) => {
+  if (!wallPlaneMesh) return;
+  const rect = canva.getBoundingClientRect();
+  mouse.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+  mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  canva.style.cursor = raycaster.intersectObject(wallPlaneMesh).length > 0 ? 'pointer' : 'default';
+});

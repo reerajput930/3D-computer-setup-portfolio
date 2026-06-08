@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Constellation Logo Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    background-image: url('./photo_stocks/universe.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+  }
+
+  .box {
+    width: 320px;
+    height: 400px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.5);
+    position: relative;
+    border-radius: 4px;
+  }
+
+  .box-title {
+    color: rgba(255,255,255,0.4);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 10px 0 4px;
+  }
+
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Lines between nodes */
+  .c-line {
+    stroke: rgba(255,255,255,0.12);
+    stroke-width: 1;
+  }
+
+  /* Logo node circles */
+  .node-wrap {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    animation: float 4s ease-in-out infinite;
+  }
+  .node-wrap:nth-child(odd)  { animation-duration: 5s; }
+  .node-wrap:nth-child(even) { animation-duration: 3.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50%       { transform: translate(-50%, -50%) translateY(-5px); }
+  }
+
+  .node-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.3s;
+    letter-spacing: 0;
+  }
+
+  .node-wrap:hover .node-circle {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.8);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(255,255,255,0.4), 0 0 28px rgba(255,255,255,0.15);
+    transform: translate(-50%, -50%) scale(1.15);
+    animation: none;
+  }
+
+  .node-label {
+    color: rgba(255,255,255,0.35);
+    font-size: 8px;
+    letter-spacing: 1px;
+    margin-top: 5px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .node-wrap:hover .node-label {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Glow dot in center of each node */
+  .node-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    position: absolute;
+    box-shadow: 0 0 6px #fff;
+  }
+
+  .hint {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="box" id="box">
+  <div class="box-title">BRANDS I WORKED WITH</div>
+
+  <!-- SVG lines drawn by JS -->
+  <svg id="svg"></svg>
+
+  <!-- Logo nodes — positions set via left/top % -->
+  <div class="node-wrap" style="left:50%;top:22%" data-id="0">
+    <div class="node-circle"><div class="node-dot"></div>Re</div>
+    <div class="node-label">Reverr</div>
+  </div>
+
+  <div class="node-wrap" style="left:20%;top:40%" data-id="1">
+    <div class="node-circle"><div class="node-dot"></div>GA</div>
+    <div class="node-label">Genieall</div>
+  </div>
+
+  <div class="node-wrap" style="left:80%;top:38%" data-id="2">
+    <div class="node-circle"><div class="node-dot"></div>HTA</div>
+    <div class="node-label">How To Abroad</div>
+  </div>
+
+  <div class="node-wrap" style="left:35%;top:62%" data-id="3">
+    <div class="node-circle"><div class="node-dot"></div>MS</div>
+    <div class="node-label">Microsoft</div>
+  </div>
+
+  <div class="node-wrap" style="left:68%;top:65%" data-id="4">
+    <div class="node-circle"><div class="node-dot"></div>GG</div>
+    <div class="node-label">Google Dev</div>
+  </div>
+
+  <div class="node-wrap" style="left:50%;top:84%" data-id="5">
+    <div class="node-circle"><div class="node-dot"></div>YT</div>
+    <div class="node-label">YouTube</div>
+  </div>
+
+  <div class="hint">HOVER A NODE</div>
+</div>
+
+<script>
+  // Define which nodes connect to which
+  const connections = [
+    [0, 1], [0, 2], [0, 3],
+    [1, 3], [2, 4], [3, 4],
+    [3, 5], [4, 5], [1, 5],
+    [0, 4]
+  ];
+
+  const box  = document.getElementById('box');
+  const svg  = document.getElementById('svg');
+  const rect = box.getBoundingClientRect();
+
+  function getCenter(node) {
+    const nr = node.getBoundingClientRect();
+    const br = box.getBoundingClientRect();
+    return {
+      x: nr.left - br.left + nr.width  / 2,
+      y: nr.top  - br.top  + nr.height / 2
+    };
+  }
+
+  const nodes = Array.from(document.querySelectorAll('.node-wrap'));
+
+  function drawLines() {
+    svg.innerHTML = '';
+    connections.forEach(([a, b]) => {
+      const pa = getCenter(nodes[a]);
+      const pb = getCenter(nodes[b]);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+      line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+      line.setAttribute('class', 'c-line');
+      svg.appendChild(line);
+    });
+  }
+
+  drawLines();
+  // Redraw periodically so lines follow the float animation
+  setInterval(drawLines, 50);
+</script>
+</body>
+</html>

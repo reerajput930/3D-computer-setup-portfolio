@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riya — Showcase 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #008080;
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Desktop ── */
+    #desktop {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .desktop-icon {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      width: 72px;
+      user-select: none;
+    }
+    .desktop-icon .icon-img {
+      width: 48px;
+      height: 48px;
+      background: #c0c0c0;
+      border: 2px solid #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .desktop-icon span {
+      color: #fff;
+      font-size: 11px;
+      text-align: center;
+      text-shadow: 1px 1px 1px #000;
+    }
+
+    /* ── Win95 Window ── */
+    #win95-window {
+      position: absolute;
+      top: 16px;
+      left: 84px;
+      width: calc(100vw - 100px);
+      height: calc(100vh - 68px);
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      background: #c0c0c0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 3px 3px 0 #000;
+    }
+
+    /* Title bar */
+    .title-bar {
+      background: #000080;
+      color: #fff;
+      padding: 4px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .title-bar-left { display: flex; align-items: center; gap: 6px; }
+    .window-controls { display: flex; gap: 2px; }
+    .win-btn {
+      width: 18px; height: 16px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-color: #fff #808080 #808080 #fff;
+      font-size: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .win-btn:active { border-color: #808080 #fff #fff #808080; }
+
+    /* Menu bar */
+    .menu-bar {
+      background: #c0c0c0;
+      padding: 2px 4px;
+      font-size: 12px;
+      border-bottom: 1px solid #808080;
+      flex-shrink: 0;
+    }
+    .menu-bar span { padding: 2px 8px; cursor: default; }
+    .menu-bar span:hover { background: #000080; color: #fff; }
+
+    /* Window body */
+    .window-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      border-top: 2px solid #fff;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 190px;
+      min-width: 190px;
+      background: #fff;
+      border-right: 2px solid #808080;
+      padding: 16px 14px;
+      overflow-y: auto;
+      font-family: 'Times New Roman', serif;
+    }
+    .sidebar-name { font-size: 22px; font-weight: bold; line-height: 1.2; }
+    .sidebar-subtitle { font-size: 13px; font-weight: bold; margin-bottom: 20px; }
+    .sidebar nav { display: flex; flex-direction: column; gap: 6px; }
+    .sidebar nav a {
+      color: #0000cc; text-decoration: none;
+      font-size: 13px; font-family: 'Times New Roman', serif; padding: 1px 0;
+    }
+    .sidebar nav a:hover { text-decoration: underline; }
+    .sidebar nav a.active { color: #cc0000; }
+    .sidebar nav a.active::before { content: '○ '; }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      background: #fff;
+      overflow-y: auto;
+      padding: 24px 32px;
+      font-family: 'Times New Roman', serif;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    h1.page-title { font-size: 48px; font-weight: bold; margin-bottom: 2px; }
+    h2.section-head { font-size: 36px; font-weight: bold; margin-bottom: 2px; }
+    h3 { font-size: 18px; font-weight: bold; margin: 16px 0 4px; }
+    p  { font-size: 14px; line-height: 1.65; margin-bottom: 12px; text-align: justify; }
+    ul { margin-left: 22px; margin-bottom: 12px; }
+    li { font-size: 13px; line-height: 1.7; }
+    a  { color: #0000cc; }
+
+    .divider { border: none; border-top: 1px solid #000; margin: 14px 0; }
+
+    /* Resume box */
+    .resume-box {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 14px;
+      border-top: 1px solid #000; border-bottom: 1px solid #000;
+      margin: 16px 0;
+    }
+    .resume-box .r-icon { font-size: 34px; }
+    .resume-box strong { font-size: 15px; display: block; margin-bottom: 3px; }
+    .resume-box a { font-size: 13px; }
+
+    /* Experience */
+    .exp-block { margin-bottom: 8px; }
+    .exp-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .exp-company { font-size: 22px; font-weight: bold; }
+    .exp-date    { font-size: 13px; font-weight: bold; }
+    .exp-role    { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
+
+    /* Skills */
+    .skills-cat { margin-bottom: 18px; }
+    .skills-cat h4 { font-size: 14px; font-weight: bold; margin-bottom: 7px; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-tag {
+      background: #c0c0c0; border: 1px solid #808080;
+      padding: 2px 9px; font-size: 12px; font-family: 'Courier New', monospace;
+    }
+
+    /* ── Project card (creative) ── */
+    .project-card {
+      border: 2px solid #000;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .project-header {
+      background: #000080;
+      padding: 22px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-header::after {
+      content: '< />';
+      position: absolute; right: 20px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 52px; color: rgba(255,255,255,0.08);
+      font-family: 'Courier New', monospace; font-weight: bold;
+    }
+    .project-name { color: #fff; font-size: 26px; font-weight: bold; margin-bottom: 4px; }
+    .project-type { color: #aaaaff; font-size: 12px; font-family: 'Courier New', monospace; }
+    .project-body { padding: 18px 24px; background: #fff; }
+    .project-desc { font-size: 14px; line-height: 1.65; margin-bottom: 14px; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .project-tag {
+      background: #000080; color: #fff;
+      padding: 2px 10px; font-size: 11px; font-family: 'Courier New', monospace;
+    }
+    .project-links { display: flex; gap: 18px; }
+    .project-link { font-size: 13px; text-decoration: underline; }
+
+    /* Contact */
+    .social-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .social-btn {
+      width: 38px; height: 38px;
+      border: 2px solid #808080; background: #c0c0c0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: bold; text-decoration: none;
+      color: #000; font-family: 'Courier New', monospace;
+    }
+    .contact-form label {
+      font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px;
+    }
+    .contact-form label.req::before { content: '* '; color: red; }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%; border: 2px inset #808080; background: #fff;
+      padding: 5px 8px; font-family: 'Times New Roman', serif;
+      font-size: 13px; margin-bottom: 12px; outline: none;
+    }
+    .contact-form textarea { height: 110px; resize: vertical; }
+    .win95-btn {
+      background: #c0c0c0; border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      padding: 4px 18px; font-size: 13px;
+      font-family: 'Times New Roman', serif; cursor: pointer;
+    }
+    .win95-btn:active { border-color: #808080 #fff #fff #808080; }
+
+    /* Status bar */
+    .status-bar {
+      background: #c0c0c0; border-top: 2px solid #fff;
+      padding: 2px 8px; font-size: 11px;
+      display: flex; justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    /* ── Taskbar ── */
+    #taskbar {
+      height: 36px; background: #c0c0c0;
+      border-top: 2px solid #fff;
+      display: flex; align-items: center; padding: 0 4px; gap: 4px;
+    }
+    .start-btn {
+      height: 28px; padding: 0 12px;
+      background: #c0c0c0; border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      font-weight: bold; font-size: 13px; cursor: pointer;
+    }
+    .taskbar-win-btn {
+      height: 24px; padding: 0 10px;
+      background: #c0c0c0; border: 2px solid;
+      border-color: #808080 #fff #fff #808080;
+      font-size: 12px; font-family: 'Courier New', monospace; cursor: pointer;
+    }
+    .taskbar-clock {
+      margin-left: auto; background: #c0c0c0;
+      border: 2px inset #808080;
+      padding: 2px 10px; font-size: 12px; font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div id="desktop">
+
+  <!-- Desktop icon -->
+  <div class="desktop-icon" ondblclick="openWindow()">
+    <div class="icon-img">📁</div>
+    <span>My Showcase</span>
+  </div>
+
+  <!-- Win95 Window -->
+  <div id="win95-window">
+
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>📁</span>
+        <span>Riya — Showcase 2026</span>
+      </div>
+      <div class="window-controls">
+        <button class="win-btn" onclick="minimizeWindow()">_</button>
+        <button class="win-btn">□</button>
+        <button class="win-btn" onclick="closeWindow()">✕</button>
+      </div>
+    </div>
+
+    <div class="menu-bar">
+      <span>File</span><span>Edit</span><span>View</span><span>Help</span>
+    </div>
+
+    <div class="window-body">
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-name">RIYA</div>
+        <div class="sidebar-subtitle">Showcase '26</div>
+        <nav>
+          <a href="#" class="active" onclick="showSection('home',this);return false;">HOME</a>
+          <a href="#" onclick="showSection('about',this);return false;">ABOUT</a>
+          <a href="#" onclick="showSection('experience',this);return false;">EXPERIENCE</a>
+          <a href="#" onclick="showSection('projects',this);return false;">PROJECTS</a>
+          <a href="#" onclick="showSection('skills',this);return false;">SKILLS</a>
+          <a href="#" onclick="showSection('contact',this);return false;">CONTACT</a>
+        </nav>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- HOME -->
+        <div class="section active" id="sec-home">
+          <h1 class="page-title">Welcome</h1>
+          <p style="font-size:18px;font-weight:bold;margin-top:4px;">I'm Riya</p>
+          <hr class="divider">
+          <p>DevOps-oriented software developer with 2+ years of hands-on experience building, deploying, and supporting production applications across full-stack and cloud environments. Skilled in automating CI/CD pipelines, managing infrastructure with GitHub Actions and Azure, and bringing a security-first mindset to every deployment.</p>
+          <p>Currently based in Brampton, Ontario — authorized to work in Canada. Feel free to explore my showcase and reach out!</p>
+          <hr class="divider">
+          <div class="resume-box">
+            <div class="r-icon">📄</div>
+            <div>
+              <strong>Looking for my resume?</strong>
+              <a href="/Riya_Functional_Resume_Dev.pdf" download>Click here to download it!</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="section" id="sec-about">
+          <h2 class="section-head">About Me</h2>
+          <hr class="divider">
+          <p>DevOps-oriented software developer with 2+ years of experience building, deploying, and supporting production applications across full-stack and cloud environments. Holds a Postgraduate Diploma in Cybersecurity from Sault College (Ontario) and a BSc in Computer Science — bringing a security-first mindset to every deployment.</p>
+          <p>Proven ability to ship features end-to-end, reduce system incidents through documentation and monitoring, and collaborate cross-functionally in Agile teams.</p>
+          <hr class="divider">
+          <h3>Education</h3>
+          <p><strong>Sault College, Brampton, Ontario</strong> — 2024–2025<br>Post Graduate Diploma in Cybersecurity (Co-op)</p>
+          <p><strong>Guru Nanak Dev University, Punjab, India</strong> — 2020–2023<br>Bachelor of Science in Computer Science</p>
+          <hr class="divider">
+          <h3>Leadership & Community</h3>
+          <p><strong>Microsoft</strong> — Student Ambassador<br>Engaged in 150 global tech events and delivered 45 technical sessions with international developer communities.</p>
+          <p><strong>Google Developer Student Club</strong> — Technical Lead<br>Mentored 300 students through 20 workshops teaching HTML, CSS, JavaScript, and core CS concepts.</p>
+          <p><strong>YouTube — Coding with Ree'</strong> — Content Creator<br>Published 12 coding videos increasing subscriber engagement by 20%.<br>
+          <a href="https://www.youtube.com/@codewithree930" target="_blank">@codewithree930</a></p>
+        </div>
+
+        <!-- EXPERIENCE -->
+        <div class="section" id="sec-experience">
+          <h2 class="section-head">Experience</h2>
+          <hr class="divider">
+
+          <div class="exp-block">
+            <div class="exp-header">
+              <span class="exp-company">Independent</span>
+              <span class="exp-date">2024 – Present</span>
+            </div>
+            <div class="exp-role">Freelance Full-Stack Developer</div>
+            <ul>
+              <li>Delivered 3 client projects across Canada, UAE, and India meeting 100% agreed milestones.</li>
+              <li>Implemented WordPress & WooCommerce setups increasing online purchases by 15%.</li>
+              <li>Provided post-launch support for 6 sites improving uptime to 99%.</li>
+            </ul>
+          </div>
+          <hr class="divider">
+
+          <div class="exp-block">
+            <div class="exp-header">
+              <span class="exp-company">Reverr</span>
+              <span class="exp-date">2023 – 2024</span>
+            </div>
+            <div class="exp-role">Software Developer</div>
+            <ul>
+              <li>Developed 12 React.js features reducing UI defects by 25% via TypeScript typing.</li>
+              <li>Integrated 8 REST API endpoints improving data consistency by 20%.</li>
+              <li>Delivered 85 tickets end-to-end improving sprint throughput by 15%.</li>
+              <li>Administered 120 GitHub PRs reducing merge conflicts by 30%.</li>
+            </ul>
+          </div>
+          <hr class="divider">
+
+          <div class="exp-block">
+            <div class="exp-header">
+              <span class="exp-company">Genieall Corporation</span>
+              <span class="exp-date">May 2025 – Aug 2025</span>
+            </div>
+            <div class="exp-role">IT Help Desk Intern</div>
+            <ul>
+              <li>Resolved 220 Tier-1 tickets improving first-contact resolution to 80%.</li>
+              <li>Provisioned 90 user accounts reducing access delays by 35%.</li>
+              <li>Authored 25 knowledge base articles cutting repeat incidents by 15%.</li>
+              <li>Escalated 40 complex cases reducing mean time to resolution by 20%.</li>
+            </ul>
+          </div>
+          <hr class="divider">
+
+          <div class="exp-block">
+            <div class="exp-header">
+              <span class="exp-company">How To Abroad</span>
+              <span class="exp-date">Dec 2022 – Apr 2023</span>
+            </div>
+            <div class="exp-role">Web Developer Intern</div>
+            <ul>
+              <li>Built a college discovery module improving user task completion by 30%.</li>
+              <li>Translated 15 Figma screens into mobile-first pages reducing layout rework by 25%.</li>
+              <li>Optimized client-side interactions decreasing page response time by 20%.</li>
+              <li>Coordinated 8 stakeholder review cycles increasing on-time delivery by 10%.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="section" id="sec-projects">
+          <h2 class="section-head">Projects</h2>
+          <hr class="divider">
+
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-name">3D Computer Setup Portfolio</div>
+              <div class="project-type">// Interactive Web Experience</div>
+            </div>
+            <div class="project-body">
+              <p class="project-desc">An immersive 3D portfolio built with Three.js featuring a fully modelled computer room setup floating in space. Includes orbit controls, auto-rotation, a terminal loading screen, background music toggle, and a Win95-style portfolio embedded on the back wall — the very page you're reading right now.</p>
+              <div class="project-tags">
+                <span class="project-tag">Three.js</span>
+                <span class="project-tag">JavaScript</span>
+                <span class="project-tag">Vite</span>
+                <span class="project-tag">GLTF / Draco</span>
+                <span class="project-tag">HTML / CSS</span>
+                <span class="project-tag">Canvas API</span>
+              </div>
+              <div class="project-links">
+                <a class="project-link" href="https://github.com/reerajput930" target="_blank">GitHub (coming soon)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="section" id="sec-skills">
+          <h2 class="section-head">Skills</h2>
+          <hr class="divider">
+          <div class="skills-cat">
+            <h4>DevOps & Cloud</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">CI/CD Pipelines</span>
+              <span class="skill-tag">GitHub Actions</span>
+              <span class="skill-tag">Azure DevOps</span>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Linux Admin</span>
+              <span class="skill-tag">Cloud Security</span>
+              <span class="skill-tag">Infrastructure Monitoring</span>
+            </div>
+          </div>
+          <div class="skills-cat">
+            <h4>Development</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">React.js</span>
+              <span class="skill-tag">JavaScript ES6+</span>
+              <span class="skill-tag">TypeScript</span>
+              <span class="skill-tag">REST API Integration</span>
+              <span class="skill-tag">Three.js</span>
+              <span class="skill-tag">WordPress</span>
+              <span class="skill-tag">WooCommerce</span>
+            </div>
+          </div>
+          <div class="skills-cat">
+            <h4>Security & IT</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Cybersecurity</span>
+              <span class="skill-tag">Network Security</span>
+              <span class="skill-tag">IAM</span>
+              <span class="skill-tag">Active Directory</span>
+              <span class="skill-tag">Microsoft 365</span>
+              <span class="skill-tag">Incident Response</span>
+            </div>
+          </div>
+          <div class="skills-cat">
+            <h4>Tools & Workflow</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">GitHub</span>
+              <span class="skill-tag">Jira</span>
+              <span class="skill-tag">Trello</span>
+              <span class="skill-tag">Postman</span>
+              <span class="skill-tag">Agile / SDLC</span>
+              <span class="skill-tag">Technical Documentation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="section" id="sec-contact">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h2 class="section-head">Contact</h2>
+            <div class="social-row">
+              <a class="social-btn" href="https://github.com/reerajput930" target="_blank">GH</a>
+              <a class="social-btn" href="https://www.linkedin.com/in/riya-rajput-23400a200/" target="_blank">in</a>
+              <a class="social-btn" href="https://www.youtube.com/@codewithree930" target="_blank">YT</a>
+            </div>
+          </div>
+          <hr class="divider">
+          <p>Feel free to reach out for opportunities, collaborations, or just to say hi!</p>
+          <p><strong>Email:</strong> <a href="mailto:rajputriya930@gmail.com">rajputriya930@gmail.com</a></p>
+          <hr class="divider">
+          <div class="contact-form">
+            <label class="req">Your name:</label>
+            <input type="text" placeholder="Name">
+            <label class="req">Email:</label>
+            <input type="email" placeholder="Email">
+            <label>Company (optional):</label>
+            <input type="text" placeholder="Company">
+            <label class="req">Message:</label>
+            <textarea placeholder="Message"></textarea>
+            <button class="win95-btn">Send Message</button>
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .window-body -->
+
+    <div class="status-bar">
+      <span>© 2026 Riya — Coding with Ree'</span>
+      <span id="status-clock"></span>
+    </div>
+
+  </div><!-- #win95-window -->
+</div><!-- #desktop -->
+
+<!-- Taskbar -->
+<div id="taskbar">
+  <button class="start-btn">▶ Start</button>
+  <button class="taskbar-win-btn" onclick="toggleWindow()">📁 My Showcase</button>
+  <div class="taskbar-clock" id="taskbar-clock"></div>
+</div>
+
+<script>
+  let isOpen = true;
+
+  function showSection(name, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('sec-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+  }
+
+  function closeWindow() {
+    document.getElementById('win95-window').style.display = 'none';
+    isOpen = false;
+  }
+  function minimizeWindow() {
+    document.getElementById('win95-window').style.display = 'none';
+    isOpen = false;
+  }
+  function openWindow() {
+    document.getElementById('win95-window').style.display = 'flex';
+    isOpen = true;
+  }
+  function toggleWindow() {
+    isOpen ? minimizeWindow() : openWindow();
+  }
+
+  function updateClock() {
+    const t = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('taskbar-clock').textContent = t;
+    document.getElementById('status-clock').textContent = t;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
