@@ -8,6 +8,12 @@ import { LoadingManager } from 'three'
 
 const progressText = document.getElementById('progress-text');
 
+if (window.innerWidth <= 480) {
+  // Mobile: expose dummy goToWall so PORTFOLIO button doesn't error, then stop
+  window.goToWall = () => {};
+  throw new Error('mobile');
+}
+
 // Function to update progress (0 to 100)
 function updateProgress(percent) {
   // console.log("safepercent",percent)

@@ -524,18 +524,10 @@
     <canvas class="cubeCanvas"></canvas>
     <script>
       if (window.innerWidth <= 480) {
-        // Skip 3D on mobile — hide loading terminal immediately
         document.getElementById('loading-terminal').style.display = 'none';
       }
     </script>
-    <script>
-      if (window.innerWidth > 480) {
-        const s = document.createElement('script');
-        s.type = 'module';
-        s.src = 'three.js';
-        document.body.appendChild(s);
-      }
-    </script>
+    <script type="module" src="three.js"></script>
     <script>
       function closePortfolio() {
         document.getElementById('portfolio-overlay').style.display = 'none';
