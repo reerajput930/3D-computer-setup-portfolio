@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Star Trail Arrow Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    background-image: url('./photo_stocks/universe.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+  }
+
+  .star-arrow-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  .label {
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* The arrow made of star dots */
+  svg.star-trail {
+    width: 120px;
+    height: 60px;
+    overflow: visible;
+  }
+
+  /* Each dot in the trail */
+  .s-dot {
+    fill: #fff;
+    filter: url(#glow);
+  }
+
+  /* Tail dots (smaller, dimmer) */
+  .s-dot.tail { opacity: 0.2; r: 2; }
+
+  /* Head dots (larger, brighter) */
+  .s-dot.head { opacity: 0.9; r: 3.5; }
+
+  /* Arrowhead lines */
+  .arrow-line {
+    stroke: rgba(255,255,255,0.8);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    filter: url(#glow);
+  }
+</style>
+</head>
+<body>
+
+<div class="star-arrow-wrap" title="Click to go to portfolio wall">
+  <div class="label">PORTFOLIO</div>
+
+  <svg class="star-trail" viewBox="0 0 120 60">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+
+    <!-- Trail dots — left to right, curving slightly toward arrowhead -->
+    <!-- Tail (dim, small) -->
+    <circle class="s-dot tail" cx="8"  cy="30" r="1.5" data-i="0"/>
+    <circle class="s-dot tail" cx="18" cy="29" r="1.8" data-i="1"/>
+    <circle class="s-dot tail" cx="28" cy="30" r="1.5" data-i="2"/>
+    <circle class="s-dot tail" cx="38" cy="28" r="2"   data-i="3"/>
+
+    <!-- Mid -->
+    <circle class="s-dot" cx="50" cy="29" r="2.5" data-i="4" style="opacity:0.4"/>
+    <circle class="s-dot" cx="62" cy="30" r="3"   data-i="5" style="opacity:0.55"/>
+    <circle class="s-dot" cx="74" cy="29" r="3"   data-i="6" style="opacity:0.65"/>
+
+    <!-- Head (bright) -->
+    <circle class="s-dot head" cx="86" cy="30" r="3.5" data-i="7"/>
+    <circle class="s-dot head" cx="96" cy="30" r="4"   data-i="8"/>
+
+    <!-- Arrowhead -->
+    <line class="arrow-line" x1="96" y1="30" x2="112" y2="20"/>
+    <line class="arrow-line" x1="96" y1="30" x2="112" y2="40"/>
+    <line class="arrow-line" x1="112" y1="20" x2="112" y2="40"/>
+  </svg>
+
+  <div class="label" style="font-size:9px;opacity:0.4;">CLICK THE BACK WALL</div>
+</div>
+
+<script>
+  const dots = document.querySelectorAll('.s-dot');
+  const total = dots.length;
+  let step = 0;
+
+  // Pulse travels from tail to head in sequence
+  function pulse() {
+    dots.forEach((d, i) => {
+      const base = parseFloat(d.style.opacity || d.getAttribute('opacity') || (d.classList.contains('head') ? 0.9 : d.classList.contains('tail') ? 0.2 : 0.4));
+      d.style.transition = 'opacity 0.3s, r 0.3s';
+      if (i === step % total) {
+        d.style.opacity = 1;
+        d.setAttribute('r', parseFloat(d.getAttribute('r')) * 1.8);
+      } else {
+        // restore
+        setTimeout(() => {
+          d.style.opacity = '';
+          d.setAttribute('r', d.getAttribute('r') / 1.8 > 0 ? d.getAttribute('r') : d.getAttribute('r'));
+        }, 200);
+      }
+    });
+    step++;
+  }
+
+  setInterval(pulse, 180);
+
+  // Simpler clean version using CSS animations
+  dots.forEach((dot, i) => {
+    dot.style.animation = `starPulse 1.8s ease-in-out ${i * 0.18}s infinite`;
+  });
+</script>
+
+<style>
+  @keyframes starPulse {
+    0%, 100% { opacity: var(--base-op, 0.3); }
+    50% { opacity: 1; filter: url(#glow) brightness(2); }
+  }
+
+  /* set base opacities as CSS vars */
+  .s-dot.tail  { --base-op: 0.15; }
+  .s-dot.head  { --base-op: 0.8; }
+  .s-dot       { --base-op: 0.4; }
+</style>
+</body>
+</html>

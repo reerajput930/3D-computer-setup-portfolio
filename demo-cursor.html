@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Custom Cursor Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+  body {
+    background: #000;
+    background-image: url('./photo_stocks/universe.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    color: white;
+  }
+
+  .info {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 4px;
+    opacity: 0.4;
+    text-transform: uppercase;
+  }
+
+  /* Main cursor dot */
+  #cursor {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,0.6);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    transition: transform 0.08s ease, width 0.2s, height 0.2s, background 0.2s;
+  }
+
+  /* Outer ring */
+  #cursor-ring {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 99998;
+    transition: transform 0.12s ease;
+  }
+
+  /* Trail dots */
+  .trail-dot {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99997;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    box-shadow: 0 0 4px rgba(255,255,255,0.8);
+  }
+
+  /* Clicked state */
+  body.clicked #cursor {
+    width: 6px;
+    height: 6px;
+    background: #aef;
+    box-shadow: 0 0 12px #aef, 0 0 30px rgba(170,238,255,0.8);
+  }
+  body.clicked #cursor-ring {
+    width: 48px;
+    height: 48px;
+    border-color: rgba(170,238,255,0.6);
+    transition: width 0.15s, height 0.15s, border-color 0.15s;
+  }
+</style>
+</head>
+<body>
+
+<div class="info">Move your mouse around</div>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<script>
+  const cursor     = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+
+  // Trail config
+  const TRAIL_COUNT = 12;
+  const trail = [];
+
+  for (let i = 0; i < TRAIL_COUNT; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('trail-dot');
+    const size = Math.max(1.5, 5 - i * 0.35);
+    dot.style.width  = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.opacity = (1 - i / TRAIL_COUNT) * 0.55;
+    document.body.appendChild(dot);
+    trail.push({ el: dot, x: 0, y: 0 });
+  }
+
+  let mouseX = 0, mouseY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top  = mouseY + 'px';
+  });
+
+  // Ring lags slightly behind
+  let ringX = 0, ringY = 0;
+
+  function animate() {
+    // Smooth ring follow
+    ringX += (mouseX - ringX) * 0.18;
+    ringY += (mouseY - ringY) * 0.18;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top  = ringY + 'px';
+
+    // Trail: each dot follows the one before it
+    trail[0].x += (mouseX - trail[0].x) * 0.35;
+    trail[0].y += (mouseY - trail[0].y) * 0.35;
+    trail[0].el.style.left = trail[0].x + 'px';
+    trail[0].el.style.top  = trail[0].y + 'px';
+
+    for (let i = 1; i < TRAIL_COUNT; i++) {
+      trail[i].x += (trail[i-1].x - trail[i].x) * 0.45;
+      trail[i].y += (trail[i-1].y - trail[i].y) * 0.45;
+      trail[i].el.style.left = trail[i].x + 'px';
+      trail[i].el.style.top  = trail[i].y + 'px';
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Click effect
+  document.addEventListener('mousedown', () => document.body.classList.add('clicked'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('clicked'));
+</script>
+</body>
+</html>

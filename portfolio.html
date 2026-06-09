@@ -3,549 +3,933 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riya — Showcase 2026</title>
+  <title>Riya — Portfolio 2026</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #008080;
-      font-family: 'Courier New', monospace;
+      background: #0a0a0f;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
       height: 100vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-    }
-
-    /* ── Desktop ── */
-    #desktop {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .desktop-icon {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      width: 72px;
-      user-select: none;
-    }
-    .desktop-icon .icon-img {
-      width: 48px;
-      height: 48px;
-      background: #c0c0c0;
-      border: 2px solid #808080;
-      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      margin-bottom: 4px;
-    }
-    .desktop-icon span {
-      color: #fff;
-      font-size: 11px;
-      text-align: center;
-      text-shadow: 1px 1px 1px #000;
     }
 
-    /* ── Win95 Window ── */
-    #win95-window {
+    /* ── macOS Window ── */
+    #mac-window {
       position: absolute;
-      top: 16px;
-      left: 84px;
-      width: calc(100vw - 100px);
-      height: calc(100vh - 68px);
-      border: 2px solid;
-      border-color: #fff #808080 #808080 #fff;
-      background: #c0c0c0;
+      top: 10px; left: 10px; right: 10px; bottom: 10px;
+      background: #1c1c1e;
+      border-radius: 12px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.9), 0 0 0 0.5px rgba(255,255,255,0.08);
       display: flex;
       flex-direction: column;
-      box-shadow: 3px 3px 0 #000;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.2s;
     }
 
     /* Title bar */
-    .title-bar {
-      background: #000080;
-      color: #fff;
-      padding: 4px 6px;
+    .mac-titlebar {
+      height: 44px;
+      background: #2c2c2e;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: 13px;
-      font-weight: bold;
+      padding: 0 16px;
       flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+      user-select: none;
     }
-    .title-bar-left { display: flex; align-items: center; gap: 6px; }
-    .window-controls { display: flex; gap: 2px; }
-    .win-btn {
-      width: 18px; height: 16px;
-      background: #c0c0c0;
-      border: 1px solid;
-      border-color: #fff #808080 #808080 #fff;
-      font-size: 10px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+    .traffic-lights { display: flex; gap: 8px; z-index: 1; }
+    .tl {
+      width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+      transition: filter 0.15s;
     }
-    .win-btn:active { border-color: #808080 #fff #fff #808080; }
-
-    /* Menu bar */
-    .menu-bar {
-      background: #c0c0c0;
-      padding: 2px 4px;
-      font-size: 12px;
-      border-bottom: 1px solid #808080;
-      flex-shrink: 0;
+    .tl:hover { filter: brightness(1.3); }
+    .tl-red    { background: #ff5f56; }
+    .tl-yellow { background: #ffbd2e; }
+    .tl-green  { background: #27c93f; }
+    .mac-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500;
     }
-    .menu-bar span { padding: 2px 8px; cursor: default; }
-    .menu-bar span:hover { background: #000080; color: #fff; }
 
     /* Window body */
-    .window-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      border-top: 2px solid #fff;
-    }
+    .mac-body { display: flex; flex: 1; overflow: hidden; }
 
     /* ── Sidebar ── */
     .sidebar {
-      width: 190px;
-      min-width: 190px;
-      background: #fff;
-      border-right: 2px solid #808080;
-      padding: 16px 14px;
+      width: 196px; min-width: 196px;
+      background: #232325;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column;
+      padding: 20px 10px;
       overflow-y: auto;
-      font-family: 'Times New Roman', serif;
     }
-    .sidebar-name { font-size: 22px; font-weight: bold; line-height: 1.2; }
-    .sidebar-subtitle { font-size: 13px; font-weight: bold; margin-bottom: 20px; }
-    .sidebar nav { display: flex; flex-direction: column; gap: 6px; }
+    .sidebar::-webkit-scrollbar { width: 0; }
+
+    .sidebar-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #0a84ff, #5e5ce6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700; color: #fff;
+      margin: 0 auto 12px;
+    }
+    .sidebar-name {
+      color: #fff; font-size: 14px; font-weight: 700;
+      text-align: center; margin-bottom: 2px;
+    }
+    .sidebar-sub {
+      color: rgba(255,255,255,0.3); font-size: 11px;
+      text-align: center; margin-bottom: 24px;
+    }
+    .sidebar-label {
+      color: rgba(255,255,255,0.22); font-size: 10px;
+      font-weight: 600; letter-spacing: 0.8px;
+      text-transform: uppercase; padding: 0 8px; margin: 8px 0 4px;
+    }
+    .sidebar nav { display: flex; flex-direction: column; gap: 1px; }
     .sidebar nav a {
-      color: #0000cc; text-decoration: none;
-      font-size: 13px; font-family: 'Times New Roman', serif; padding: 1px 0;
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 7px;
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      font-size: 13px; font-weight: 400;
+      transition: background 0.15s, color 0.15s;
     }
-    .sidebar nav a:hover { text-decoration: underline; }
-    .sidebar nav a.active { color: #cc0000; }
-    .sidebar nav a.active::before { content: '○ '; }
+    .sidebar nav a:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+    .sidebar nav a.active { background: rgba(10,132,255,0.18); color: #4db8ff; }
+    .nav-icon { font-size: 13px; width: 16px; text-align: center; opacity: 0.8; }
 
     /* ── Content ── */
     .content {
-      flex: 1;
-      background: #fff;
-      overflow-y: auto;
-      padding: 24px 32px;
-      font-family: 'Times New Roman', serif;
+      flex: 1; background: #1c1c1e;
+      overflow-y: auto; padding: 36px 44px;
     }
+    .content::-webkit-scrollbar { width: 5px; }
+    .content::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 
+    /* Sections */
     .section { display: none; }
-    .section.active { display: block; }
+    .section.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-    h1.page-title { font-size: 48px; font-weight: bold; margin-bottom: 2px; }
-    h2.section-head { font-size: 36px; font-weight: bold; margin-bottom: 2px; }
-    h3 { font-size: 18px; font-weight: bold; margin: 16px 0 4px; }
-    p  { font-size: 14px; line-height: 1.65; margin-bottom: 12px; text-align: justify; }
-    ul { margin-left: 22px; margin-bottom: 12px; }
-    li { font-size: 13px; line-height: 1.7; }
-    a  { color: #0000cc; }
+    /* Typography */
+    h1 { font-size: 44px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    h2 { font-size: 30px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+    h3 { font-size: 16px; font-weight: 600; color: #fff; margin: 20px 0 6px; }
+    p  { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
+    a  { color: #0a84ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { margin-left: 18px; margin-bottom: 12px; }
+    li { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.55); }
 
-    .divider { border: none; border-top: 1px solid #000; margin: 14px 0; }
+    .divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 22px 0; }
 
-    /* Resume box */
-    .resume-box {
-      display: flex; align-items: center; gap: 14px;
-      padding: 12px 14px;
-      border-top: 1px solid #000; border-bottom: 1px solid #000;
-      margin: 16px 0;
+    /* ── Home two-column layout ── */
+    .home-layout {
+      display: flex;
+      gap: 32px;
+      align-items: stretch;
     }
-    .resume-box .r-icon { font-size: 34px; }
-    .resume-box strong { font-size: 15px; display: block; margin-bottom: 3px; }
-    .resume-box a { font-size: 13px; }
+    .home-text { flex: 1; min-width: 0; }
 
-    /* Experience */
-    .exp-block { margin-bottom: 8px; }
-    .exp-header { display: flex; justify-content: space-between; align-items: baseline; }
-    .exp-company { font-size: 22px; font-weight: bold; }
-    .exp-date    { font-size: 13px; font-weight: bold; }
-    .exp-role    { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
-
-    /* Skills */
-    .skills-cat { margin-bottom: 18px; }
-    .skills-cat h4 { font-size: 14px; font-weight: bold; margin-bottom: 7px; }
-    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .skill-tag {
-      background: #c0c0c0; border: 1px solid #808080;
-      padding: 2px 9px; font-size: 12px; font-family: 'Courier New', monospace;
+    .home-photo {
+      flex-shrink: 0;
+      width: 240px;
+      align-self: stretch;
     }
 
-    /* ── Project card (creative) ── */
-    .project-card {
-      border: 2px solid #000;
-      margin-bottom: 24px;
-      overflow: hidden;
-    }
-    .project-header {
-      background: #000080;
-      padding: 22px 26px;
+    /* Glitch photo effect */
+    .glitch-wrap {
+      width: 240px;
+      height: 100%;
+      min-height: 560px;
       position: relative;
       overflow: hidden;
+      border-radius: 12px;
+    }
+    .glitch-wrap img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: top center;
+      display: block;
+      filter: grayscale(1) contrast(1.2) brightness(0.9);
+    }
+    .glitch-layer {
+      position: absolute;
+      inset: 0;
+      background-image: url('/me.png');
+      background-size: cover;
+      background-position: top center;
+      filter: grayscale(1) contrast(1.15);
+      mix-blend-mode: screen;
+      animation: glitch-r 4s infinite;
+    }
+    .glitch-layer.b {
+      filter: grayscale(1) contrast(1.15) hue-rotate(180deg);
+      animation: glitch-b 4s infinite 0.06s;
+    }
+    @keyframes glitch-r {
+      0%,88%,100% { transform: translate(0); opacity: 0; }
+      89% { transform: translate(-5px, 2px); opacity: 0.55; clip-path: inset(18% 0 52% 0); }
+      91% { transform: translate(4px, -1px); opacity: 0.45; clip-path: inset(62% 0 8% 0); }
+      93% { transform: translate(-3px, 3px); opacity: 0.6; clip-path: inset(38% 0 32% 0); }
+    }
+    @keyframes glitch-b {
+      0%,88%,100% { transform: translate(0); opacity: 0; }
+      90% { transform: translate(6px, -2px); opacity: 0.45; clip-path: inset(28% 0 42% 0); }
+      92% { transform: translate(-4px, 1px); opacity: 0.5; clip-path: inset(8% 0 72% 0); }
+    }
+    .glitch-scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px
+      );
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    /* Resume card */
+    .resume-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+      margin: 20px 0;
+      transition: background 0.2s;
+    }
+    .resume-card:hover { background: rgba(255,255,255,0.07); }
+    .resume-card .r-icon { font-size: 30px; }
+    .resume-card strong { color: #fff; font-size: 15px; display: block; margin-bottom: 4px; }
+    .resume-card a { color: #0a84ff; font-size: 13px; }
+
+    /* Experience */
+    .exp-block { margin-bottom: 4px; }
+    .exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+    .exp-company { font-size: 18px; font-weight: 700; color: #fff; }
+    .exp-date { font-size: 12px; color: rgba(255,255,255,0.3); }
+    .exp-role { font-size: 13px; color: #0a84ff; font-weight: 500; margin-bottom: 8px; }
+
+    /* Skills */
+    .skills-cat { margin-bottom: 22px; }
+    .skills-cat h4 {
+      font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .skill-tag {
+      background: rgba(10,132,255,0.1);
+      border: 1px solid rgba(10,132,255,0.22);
+      color: #4db8ff; padding: 4px 12px;
+      border-radius: 20px; font-size: 12px;
+    }
+
+    /* Project card */
+    .project-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; overflow: hidden;
+      margin-bottom: 24px;
+      transition: border-color 0.2s;
+    }
+    .project-card:hover { border-color: rgba(255,255,255,0.14); }
+    .project-header {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a1a2e 100%);
+      padding: 24px 28px; position: relative; overflow: hidden;
     }
     .project-header::after {
-      content: '< />';
-      position: absolute; right: 20px; top: 50%;
-      transform: translateY(-50%);
-      font-size: 52px; color: rgba(255,255,255,0.08);
-      font-family: 'Courier New', monospace; font-weight: bold;
+      content: '</>'; position: absolute;
+      right: 24px; top: 50%; transform: translateY(-50%);
+      font-size: 52px; color: rgba(255,255,255,0.04);
+      font-family: monospace;
     }
-    .project-name { color: #fff; font-size: 26px; font-weight: bold; margin-bottom: 4px; }
-    .project-type { color: #aaaaff; font-size: 12px; font-family: 'Courier New', monospace; }
-    .project-body { padding: 18px 24px; background: #fff; }
-    .project-desc { font-size: 14px; line-height: 1.65; margin-bottom: 14px; }
+    .project-name { color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .project-type { color: rgba(10,132,255,0.7); font-size: 12px; font-family: monospace; }
+    .project-body { padding: 20px 28px; }
+    .project-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 16px; }
     .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
     .project-tag {
-      background: #000080; color: #fff;
-      padding: 2px 10px; font-size: 11px; font-family: 'Courier New', monospace;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5); padding: 3px 10px;
+      border-radius: 20px; font-size: 11px; font-family: monospace;
     }
-    .project-links { display: flex; gap: 18px; }
-    .project-link { font-size: 13px; text-decoration: underline; }
+    .project-link { color: #0a84ff; font-size: 13px; }
+
+    /* Certifications */
+    .cert-card {
+      display: flex; align-items: flex-start; gap: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 16px 20px;
+      margin-bottom: 12px;
+      transition: background 0.2s;
+    }
+    .cert-card:hover { background: rgba(255,255,255,0.06); }
+    .cert-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .cert-name { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .cert-issuer { color: rgba(255,255,255,0.4); font-size: 12px; margin-bottom: 4px; }
+    .cert-date { color: rgba(255,255,255,0.3); font-size: 11px; margin-bottom: 8px; }
+    .cert-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
     /* Contact */
-    .social-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .social-row { display: flex; gap: 10px; }
     .social-btn {
-      width: 38px; height: 38px;
-      border: 2px solid #808080; background: #c0c0c0;
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: bold; text-decoration: none;
-      color: #000; font-family: 'Courier New', monospace;
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6);
+      text-decoration: none; transition: background 0.2s, color 0.2s;
     }
+    .social-btn:hover { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; }
     .contact-form label {
-      font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px;
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.35);
+      display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .contact-form label.req::before { content: '* '; color: red; }
-    .contact-form input,
-    .contact-form textarea {
-      width: 100%; border: 2px inset #808080; background: #fff;
-      padding: 5px 8px; font-family: 'Times New Roman', serif;
-      font-size: 13px; margin-bottom: 12px; outline: none;
+    .contact-form input, .contact-form textarea {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 8px;
+      padding: 10px 14px; color: #fff; font-size: 14px;
+      font-family: inherit; margin-bottom: 14px; outline: none;
+      transition: border-color 0.2s;
     }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: #0a84ff; }
     .contact-form textarea { height: 110px; resize: vertical; }
-    .win95-btn {
-      background: #c0c0c0; border: 2px solid;
-      border-color: #fff #808080 #808080 #fff;
-      padding: 4px 18px; font-size: 13px;
-      font-family: 'Times New Roman', serif; cursor: pointer;
+    .mac-btn {
+      background: #0a84ff; border: none; border-radius: 8px;
+      padding: 10px 24px; color: #fff; font-size: 14px;
+      font-weight: 500; cursor: pointer; font-family: inherit;
+      transition: background 0.2s;
     }
-    .win95-btn:active { border-color: #808080 #fff #fff #808080; }
+    .mac-btn:hover { background: #0070d8; }
 
-    /* Status bar */
-    .status-bar {
-      background: #c0c0c0; border-top: 2px solid #fff;
-      padding: 2px 8px; font-size: 11px;
-      display: flex; justify-content: space-between;
-      flex-shrink: 0;
+    /* ── Responsive ── */
+
+    @media (max-width: 768px) {
+      #mac-window {
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 0;
+      }
+
+      /* Sidebar → horizontal bottom nav */
+      .mac-body { flex-direction: column; }
+
+      .sidebar {
+        width: 100%; min-width: unset;
+        height: auto;
+        border-right: none;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        flex-direction: row;
+        align-items: center;
+        padding: 8px 10px;
+        order: 2;
+        overflow-x: auto;
+        gap: 4px;
+      }
+      .sidebar-avatar,
+      .sidebar-name,
+      .sidebar-sub,
+      .sidebar-label { display: none; }
+
+      .sidebar nav {
+        flex-direction: row;
+        gap: 4px;
+        width: 100%;
+      }
+      .sidebar nav a {
+        flex-direction: column;
+        gap: 3px;
+        padding: 6px 10px;
+        font-size: 10px;
+        border-radius: 8px;
+        white-space: nowrap;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .nav-icon { font-size: 16px; width: auto; }
+
+      .content {
+        order: 1;
+        padding: 24px 20px;
+        flex: 1;
+      }
+
+      /* Home: stack photo below title, above text */
+      .home-layout {
+        flex-direction: column;
+        gap: 24px;
+      }
+      .home-photo {
+        width: 100%;
+        align-self: auto;
+      }
+      .glitch-wrap {
+        width: 100%;
+        height: 340px;
+        min-height: unset;
+      }
+      .glitch-wrap img { object-fit: contain; }
+
+      /* Typography */
+      h1 { font-size: 32px; }
+      h2 { font-size: 24px; }
+
+      /* Exp header stack */
+      .exp-header { flex-direction: column; gap: 2px; }
+
+      /* Project cards */
+      .project-header { padding: 18px 20px; }
+      .project-body { padding: 16px 20px; }
+      .project-name { font-size: 17px; }
     }
 
-    /* ── Taskbar ── */
-    #taskbar {
-      height: 36px; background: #c0c0c0;
-      border-top: 2px solid #fff;
-      display: flex; align-items: center; padding: 0 4px; gap: 4px;
+    @media (max-width: 480px) {
+      .content { padding: 20px 16px; }
+
+      h1 { font-size: 26px; }
+      h2 { font-size: 20px; }
+
+      .sidebar nav a {
+        font-size: 9px;
+        padding: 5px 6px;
+      }
+
+      .glitch-wrap { height: 280px; }
+
+      .cert-card { flex-direction: column; gap: 10px; }
+
+      .project-header::after { display: none; }
+
+      .resume-card { flex-direction: column; gap: 10px; }
+
+      /* Contact social row */
+      .social-row { flex-wrap: wrap; }
     }
-    .start-btn {
-      height: 28px; padding: 0 12px;
-      background: #c0c0c0; border: 2px solid;
-      border-color: #fff #808080 #808080 #fff;
-      font-weight: bold; font-size: 13px; cursor: pointer;
+
+    /* Dock */
+    #mac-dock {
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      background: rgba(40,40,44,0.75); backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      padding: 8px 14px; display: flex; gap: 10px; align-items: center; z-index: 100;
     }
-    .taskbar-win-btn {
-      height: 24px; padding: 0 10px;
-      background: #c0c0c0; border: 2px solid;
-      border-color: #808080 #fff #fff #808080;
-      font-size: 12px; font-family: 'Courier New', monospace; cursor: pointer;
+    .dock-item {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; cursor: pointer; text-decoration: none;
+      transition: transform 0.15s, background 0.15s;
+      border: 1px solid rgba(255,255,255,0.08);
     }
-    .taskbar-clock {
-      margin-left: auto; background: #c0c0c0;
-      border: 2px inset #808080;
-      padding: 2px 10px; font-size: 12px; font-family: 'Courier New', monospace;
-    }
+    .dock-item:hover { transform: translateY(-5px) scale(1.12); background: rgba(255,255,255,0.13); }
+    .dock-sep { width: 1px; height: 28px; background: rgba(255,255,255,0.12); margin: 0 2px; }
   </style>
 </head>
 <body>
 
-<div id="desktop">
-
-  <!-- Desktop icon -->
-  <div class="desktop-icon" ondblclick="openWindow()">
-    <div class="icon-img">📁</div>
-    <span>My Showcase</span>
+<div id="mac-window">
+  <!-- Title bar -->
+  <div class="mac-titlebar">
+    <div class="traffic-lights">
+      <div class="tl tl-red"    onclick="closeWindow()"></div>
+      <div class="tl tl-yellow" onclick="minimizeWindow()"></div>
+      <div class="tl tl-green"></div>
+    </div>
+    <div class="mac-title">Riya — Portfolio 2026</div>
   </div>
 
-  <!-- Win95 Window -->
-  <div id="win95-window">
-
-    <div class="title-bar">
-      <div class="title-bar-left">
-        <span>📁</span>
-        <span>Riya — Showcase 2026</span>
-      </div>
-      <div class="window-controls">
-        <button class="win-btn" onclick="minimizeWindow()">_</button>
-        <button class="win-btn">□</button>
-        <button class="win-btn" onclick="closeWindow()">✕</button>
-      </div>
+  <div class="mac-body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-avatar">R</div>
+      <div class="sidebar-name">Riya</div>
+      <div class="sidebar-sub">Coding with Ree'</div>
+      <div class="sidebar-label">Menu</div>
+      <nav>
+        <a href="#" class="active" onclick="showSection('home',this);return false;">
+          <span class="nav-icon">⌂</span> Home
+        </a>
+<a href="#" onclick="showSection('skills',this);return false;">
+          <span class="nav-icon">◎</span> Skills & Certifications
+        </a>
+        <a href="#" onclick="showSection('leadership',this);return false;">
+          <span class="nav-icon">★</span> Leadership & Community
+        </a>
+        <a href="#" onclick="showSection('experience',this);return false;">
+          <span class="nav-icon">◈</span> Experience
+        </a>
+        <a href="#" onclick="showSection('projects',this);return false;">
+          <span class="nav-icon">◧</span> Projects
+        </a>
+<a href="#" onclick="showSection('contact',this);return false;">
+          <span class="nav-icon">◌</span> Contact
+        </a>
+      </nav>
     </div>
 
-    <div class="menu-bar">
-      <span>File</span><span>Edit</span><span>View</span><span>Help</span>
-    </div>
+    <!-- Content -->
+    <div class="content">
 
-    <div class="window-body">
+      <!-- HOME -->
+      <div class="section active" id="sec-home">
 
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="sidebar-name">RIYA</div>
-        <div class="sidebar-subtitle">Showcase '26</div>
-        <nav>
-          <a href="#" class="active" onclick="showSection('home',this);return false;">HOME</a>
-          <a href="#" onclick="showSection('about',this);return false;">ABOUT</a>
-          <a href="#" onclick="showSection('experience',this);return false;">EXPERIENCE</a>
-          <a href="#" onclick="showSection('projects',this);return false;">PROJECTS</a>
-          <a href="#" onclick="showSection('skills',this);return false;">SKILLS</a>
-          <a href="#" onclick="showSection('contact',this);return false;">CONTACT</a>
-        </nav>
+        <!-- Title above columns -->
+        <h1>Welcome human :)</h1>
+        <p style="font-size:16px;color:rgba(255,255,255,0.4);margin-top:4px;font-weight:400;">I'm Riya</p>
+        <hr class="divider">
+
+        <!-- Shape-outside float layout -->
+        <div class="home-layout">
+
+          <!-- Left: text -->
+          <div class="home-text">
+            <p>Hi, human. Lovely connecting with you. Let me introduce myself. Let's go a little deeper and disconnect myself from job title and skills I acquire. Small fun fact — I'm a human who loves to connect with another human and genuinely interested in understanding and knowing about the past and the future of that personality. Passionate about understanding the psyche, the motto, and the meaning behind human action and behavior.</p>
+            <hr class="divider">
+            <h3>About me</h3>
+            <p>I'm a Full-Stack Developer with a Cybersecurity background. I've shipped 85+ tickets at a product startup, built websites for clients across Canada, Dubai, and India, led developer communities under Google and Microsoft, and somehow also ended up in front of a camera teaching tech to 3,000+ people on YouTube and Instagram through Coding with Ree'.</p>
+            <p>Right now I'm working as a <strong>Full Stack .NET Software Developer at VR Tech Info Inc.,</strong> contributing to Rogers as a client — reducing API integration errors, improving sprint completion rates, and cutting deployment cycle time through CI/CD pipelines on Azure DevOps. It's fast-paced, real-world, and exactly the kind of work that keeps me sharp.</p>
+            <p>But strip all of that away — and I'm just someone who genuinely loves people. I ask too many questions. I want to know where you started, what shaped you, and where you're trying to go. That curiosity isn't separate from my work — it's the reason I build things that actually make sense to the people using them.</p>
+            <p>Outside the screen: morning runs, breathwork, basketball, tennis, table tennis. I move to think clearly.</p>
+            <hr class="divider">
+            <h3>Education</h3>
+            <p><strong style="color:#fff;">Sault College, Brampton, Ontario</strong> — 2024–2025<br>Post Graduate Diploma in Cybersecurity (Co-op)</p>
+            <p><strong style="color:#fff;">Guru Nanak Dev University, Punjab, India</strong> — 2020–2023<br>Bachelor of Science in Computer Science</p>
+          </div>
+
+          <!-- Right: glitch photo -->
+          <div class="home-photo">
+            <div class="glitch-wrap">
+              <img src="/me.png" alt="Riya">
+              <div class="glitch-layer"></div>
+              <div class="glitch-layer b"></div>
+              <div class="glitch-scanlines"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Resume card full-width below -->
+        <hr class="divider">
+        <div class="resume-card">
+          <div class="r-icon">📄</div>
+          <div>
+            <strong>Resume</strong>
+            <a href="/Riya_Functional_Resume_Dev.pdf" download>Download PDF →</a>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Content -->
-      <div class="content">
+      <!-- EXPERIENCE -->
+      <div class="section" id="sec-experience">
+        <h2>Experience</h2>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">VR Tech Info Inc. <span style="color:rgba(255,255,255,0.3);font-size:14px;font-weight:400;">· Client: Rogers</span></span>
+            <span class="exp-date">Jan 2026 – Present</span>
+          </div>
+          <div class="exp-role">Full Stack .NET Software Developer</div>
+          <ul>
+            <li>Contributed as a Full-Stack .NET and Python Developer at Rogers, delivering backend APIs, cloud deployments, and Agile sprint features in a remote contract role.</li>
+            <li>Reduced API integration errors by 20% by building and maintaining .NET Core RESTful APIs and JSON data contracts at Rogers.</li>
+            <li>Improved sprint completion rate by 15% by delivering full-stack .NET and Python features in Agile/Scrum sprints remotely.</li>
+            <li>Decreased deployment cycle time by 25% by setting up CI/CD pipelines on Azure DevOps with zero downtime delivery.</li>
+            <li>Strengthened app security and data consistency using React, .NET Core APIs, and Entity Framework on Azure.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Independent</span>
+            <span class="exp-date">2024 – 2025</span>
+          </div>
+          <div class="exp-role">Freelance Full-Stack Developer</div>
+          <ul>
+            <li>Delivered 3 client projects across Canada, UAE, and India meeting 100% agreed milestones.</li>
+            <li>Implemented WordPress & WooCommerce setups increasing online purchases by 15%.</li>
+            <li>Provided post-launch support for 6 sites improving uptime to 99%.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Reverr</span>
+            <span class="exp-date">2023 – 2024</span>
+          </div>
+          <div class="exp-role">Software Developer</div>
+          <ul>
+            <li>Developed 12 React.js features reducing UI defects by 25% via TypeScript typing.</li>
+            <li>Integrated 8 REST API endpoints improving data consistency by 20%.</li>
+            <li>Delivered 85 tickets end-to-end improving sprint throughput by 15%.</li>
+            <li>Administered 120 GitHub PRs reducing merge conflicts by 30%.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Genieall Corporation</span>
+            <span class="exp-date">May 2025 – Aug 2025</span>
+          </div>
+          <div class="exp-role">IT Help Desk Intern</div>
+          <ul>
+            <li>Resolved 220 Tier-1 tickets improving first-contact resolution to 80%.</li>
+            <li>Provisioned 90 user accounts reducing access delays by 35%.</li>
+            <li>Authored 25 knowledge base articles cutting repeat incidents by 15%.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">How To Abroad</span>
+            <span class="exp-date">Dec 2022 – Apr 2023</span>
+          </div>
+          <div class="exp-role">Web Developer Intern</div>
+          <ul>
+            <li>Built a college discovery module improving user task completion by 30%.</li>
+            <li>Translated 15 Figma screens into mobile-first pages reducing layout rework by 25%.</li>
+            <li>Optimized client-side interactions decreasing page response time by 20%.</li>
+          </ul>
+        </div>
+      </div>
 
-        <!-- HOME -->
-        <div class="section active" id="sec-home">
-          <h1 class="page-title">Welcome</h1>
-          <p style="font-size:18px;font-weight:bold;margin-top:4px;">I'm Riya</p>
-          <hr class="divider">
-          <p>DevOps-oriented software developer with 2+ years of hands-on experience building, deploying, and supporting production applications across full-stack and cloud environments. Skilled in automating CI/CD pipelines, managing infrastructure with GitHub Actions and Azure, and bringing a security-first mindset to every deployment.</p>
-          <p>Currently based in Brampton, Ontario — authorized to work in Canada. Feel free to explore my showcase and reach out!</p>
-          <hr class="divider">
-          <div class="resume-box">
-            <div class="r-icon">📄</div>
-            <div>
-              <strong>Looking for my resume?</strong>
-              <a href="/Riya_Functional_Resume_Dev.pdf" download>Click here to download it!</a>
+      <!-- PROJECTS -->
+      <div class="section" id="sec-projects">
+        <h2>Projects</h2>
+        <hr class="divider">
+
+        <!-- Face Recognition -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">Face Recognition</div>
+            <div class="project-type">// Computer Vision · Python</div>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">A facial recognition system capable of matching a human face from a digital image or video frame against a trained database, using cascade classifiers and feature extraction. Includes sample training pipeline — collect samples, train the model, run recognition.</p>
+            <div class="project-tags">
+              <span class="project-tag">Python</span>
+              <span class="project-tag">OpenCV</span>
+              <span class="project-tag">Machine Learning</span>
+              <span class="project-tag">Computer Vision</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/Face-recognition" target="_blank">GitHub →</a>
             </div>
           </div>
         </div>
 
-        <!-- ABOUT -->
-        <div class="section" id="sec-about">
-          <h2 class="section-head">About Me</h2>
-          <hr class="divider">
-          <p>DevOps-oriented software developer with 2+ years of experience building, deploying, and supporting production applications across full-stack and cloud environments. Holds a Postgraduate Diploma in Cybersecurity from Sault College (Ontario) and a BSc in Computer Science — bringing a security-first mindset to every deployment.</p>
-          <p>Proven ability to ship features end-to-end, reduce system incidents through documentation and monitoring, and collaborate cross-functionally in Agile teams.</p>
-          <hr class="divider">
-          <h3>Education</h3>
-          <p><strong>Sault College, Brampton, Ontario</strong> — 2024–2025<br>Post Graduate Diploma in Cybersecurity (Co-op)</p>
-          <p><strong>Guru Nanak Dev University, Punjab, India</strong> — 2020–2023<br>Bachelor of Science in Computer Science</p>
-          <hr class="divider">
-          <h3>Leadership & Community</h3>
-          <p><strong>Microsoft</strong> — Student Ambassador<br>Engaged in 150 global tech events and delivered 45 technical sessions with international developer communities.</p>
-          <p><strong>Google Developer Student Club</strong> — Technical Lead<br>Mentored 300 students through 20 workshops teaching HTML, CSS, JavaScript, and core CS concepts.</p>
-          <p><strong>YouTube — Coding with Ree'</strong> — Content Creator<br>Published 12 coding videos increasing subscriber engagement by 20%.<br>
-          <a href="https://www.youtube.com/@codewithree930" target="_blank">@codewithree930</a></p>
-        </div>
+        <hr class="divider">
 
-        <!-- EXPERIENCE -->
-        <div class="section" id="sec-experience">
-          <h2 class="section-head">Experience</h2>
-          <hr class="divider">
-
-          <div class="exp-block">
-            <div class="exp-header">
-              <span class="exp-company">Independent</span>
-              <span class="exp-date">2024 – Present</span>
-            </div>
-            <div class="exp-role">Freelance Full-Stack Developer</div>
-            <ul>
-              <li>Delivered 3 client projects across Canada, UAE, and India meeting 100% agreed milestones.</li>
-              <li>Implemented WordPress & WooCommerce setups increasing online purchases by 15%.</li>
-              <li>Provided post-launch support for 6 sites improving uptime to 99%.</li>
-            </ul>
+        <!-- Zero Dashboard -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">Zero Dashboard</div>
+            <div class="project-type">// Analytics · MERN Stack</div>
           </div>
-          <hr class="divider">
-
-          <div class="exp-block">
-            <div class="exp-header">
-              <span class="exp-company">Reverr</span>
-              <span class="exp-date">2023 – 2024</span>
+          <div class="project-body">
+            <p class="project-desc">A full-stack analytics dashboard featuring real-time data visualisation through interactive charts, secure JWT-based authentication, and a responsive UI. Architected with client-server separation, global state via Context API, and data persistence through MongoDB. Deployed live on Netlify.</p>
+            <div class="project-tags">
+              <span class="project-tag">React.js</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">Express.js</span>
+              <span class="project-tag">MongoDB</span>
+              <span class="project-tag">Tailwind CSS</span>
+              <span class="project-tag">JWT Auth</span>
+              <span class="project-tag">Context API</span>
             </div>
-            <div class="exp-role">Software Developer</div>
-            <ul>
-              <li>Developed 12 React.js features reducing UI defects by 25% via TypeScript typing.</li>
-              <li>Integrated 8 REST API endpoints improving data consistency by 20%.</li>
-              <li>Delivered 85 tickets end-to-end improving sprint throughput by 15%.</li>
-              <li>Administered 120 GitHub PRs reducing merge conflicts by 30%.</li>
-            </ul>
-          </div>
-          <hr class="divider">
-
-          <div class="exp-block">
-            <div class="exp-header">
-              <span class="exp-company">Genieall Corporation</span>
-              <span class="exp-date">May 2025 – Aug 2025</span>
-            </div>
-            <div class="exp-role">IT Help Desk Intern</div>
-            <ul>
-              <li>Resolved 220 Tier-1 tickets improving first-contact resolution to 80%.</li>
-              <li>Provisioned 90 user accounts reducing access delays by 35%.</li>
-              <li>Authored 25 knowledge base articles cutting repeat incidents by 15%.</li>
-              <li>Escalated 40 complex cases reducing mean time to resolution by 20%.</li>
-            </ul>
-          </div>
-          <hr class="divider">
-
-          <div class="exp-block">
-            <div class="exp-header">
-              <span class="exp-company">How To Abroad</span>
-              <span class="exp-date">Dec 2022 – Apr 2023</span>
-            </div>
-            <div class="exp-role">Web Developer Intern</div>
-            <ul>
-              <li>Built a college discovery module improving user task completion by 30%.</li>
-              <li>Translated 15 Figma screens into mobile-first pages reducing layout rework by 25%.</li>
-              <li>Optimized client-side interactions decreasing page response time by 20%.</li>
-              <li>Coordinated 8 stakeholder review cycles increasing on-time delivery by 10%.</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- PROJECTS -->
-        <div class="section" id="sec-projects">
-          <h2 class="section-head">Projects</h2>
-          <hr class="divider">
-
-          <div class="project-card">
-            <div class="project-header">
-              <div class="project-name">3D Computer Setup Portfolio</div>
-              <div class="project-type">// Interactive Web Experience</div>
-            </div>
-            <div class="project-body">
-              <p class="project-desc">An immersive 3D portfolio built with Three.js featuring a fully modelled computer room setup floating in space. Includes orbit controls, auto-rotation, a terminal loading screen, background music toggle, and a Win95-style portfolio embedded on the back wall — the very page you're reading right now.</p>
-              <div class="project-tags">
-                <span class="project-tag">Three.js</span>
-                <span class="project-tag">JavaScript</span>
-                <span class="project-tag">Vite</span>
-                <span class="project-tag">GLTF / Draco</span>
-                <span class="project-tag">HTML / CSS</span>
-                <span class="project-tag">Canvas API</span>
-              </div>
-              <div class="project-links">
-                <a class="project-link" href="https://github.com/reerajput930" target="_blank">GitHub (coming soon)</a>
-              </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/zero-dashboard" target="_blank">GitHub →</a>
+              <a class="project-link" href="https://zero-dashboard.netlify.app" target="_blank">Live Demo →</a>
             </div>
           </div>
         </div>
 
-        <!-- SKILLS -->
-        <div class="section" id="sec-skills">
-          <h2 class="section-head">Skills</h2>
-          <hr class="divider">
-          <div class="skills-cat">
-            <h4>DevOps & Cloud</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">CI/CD Pipelines</span>
-              <span class="skill-tag">GitHub Actions</span>
-              <span class="skill-tag">Azure DevOps</span>
-              <span class="skill-tag">Docker</span>
-              <span class="skill-tag">Linux Admin</span>
-              <span class="skill-tag">Cloud Security</span>
-              <span class="skill-tag">Infrastructure Monitoring</span>
-            </div>
+        <hr class="divider">
+
+        <!-- Growth App -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">Growth App</div>
+            <div class="project-type">// Full-Stack MERN</div>
           </div>
-          <div class="skills-cat">
-            <h4>Development</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">React.js</span>
-              <span class="skill-tag">JavaScript ES6+</span>
-              <span class="skill-tag">TypeScript</span>
-              <span class="skill-tag">REST API Integration</span>
-              <span class="skill-tag">Three.js</span>
-              <span class="skill-tag">WordPress</span>
-              <span class="skill-tag">WooCommerce</span>
+          <div class="project-body">
+            <p class="project-desc">A collaborative progress tracker built for two individuals to check their growth reports and achieve goals together. Includes a ToDo manager and Jira-style dashboard for task management.</p>
+            <div class="project-tags">
+              <span class="project-tag">React.js</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">Express.js</span>
+              <span class="project-tag">MongoDB Atlas</span>
+              <span class="project-tag">Tailwind CSS</span>
+              <span class="project-tag">Context API</span>
             </div>
-          </div>
-          <div class="skills-cat">
-            <h4>Security & IT</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">Cybersecurity</span>
-              <span class="skill-tag">Network Security</span>
-              <span class="skill-tag">IAM</span>
-              <span class="skill-tag">Active Directory</span>
-              <span class="skill-tag">Microsoft 365</span>
-              <span class="skill-tag">Incident Response</span>
-            </div>
-          </div>
-          <div class="skills-cat">
-            <h4>Tools & Workflow</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">GitHub</span>
-              <span class="skill-tag">Jira</span>
-              <span class="skill-tag">Trello</span>
-              <span class="skill-tag">Postman</span>
-              <span class="skill-tag">Agile / SDLC</span>
-              <span class="skill-tag">Technical Documentation</span>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/growth-app" target="_blank">GitHub →</a>
+              <a class="project-link" href="https://growth-application.netlify.app" target="_blank">Live Demo →</a>
             </div>
           </div>
         </div>
 
-        <!-- CONTACT -->
-        <div class="section" id="sec-contact">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <h2 class="section-head">Contact</h2>
-            <div class="social-row">
-              <a class="social-btn" href="https://github.com/reerajput930" target="_blank">GH</a>
-              <a class="social-btn" href="https://www.linkedin.com/in/riya-rajput-23400a200/" target="_blank">in</a>
-              <a class="social-btn" href="https://www.youtube.com/@codewithree930" target="_blank">YT</a>
-            </div>
+        <hr class="divider">
+
+        <!-- 3D Portfolio -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">3D Computer Setup Portfolio</div>
+            <div class="project-type">// Interactive Web Experience</div>
           </div>
-          <hr class="divider">
-          <p>Feel free to reach out for opportunities, collaborations, or just to say hi!</p>
-          <p><strong>Email:</strong> <a href="mailto:rajputriya930@gmail.com">rajputriya930@gmail.com</a></p>
-          <hr class="divider">
-          <div class="contact-form">
-            <label class="req">Your name:</label>
-            <input type="text" placeholder="Name">
-            <label class="req">Email:</label>
-            <input type="email" placeholder="Email">
-            <label>Company (optional):</label>
-            <input type="text" placeholder="Company">
-            <label class="req">Message:</label>
-            <textarea placeholder="Message"></textarea>
-            <button class="win95-btn">Send Message</button>
+          <div class="project-body">
+            <p class="project-desc">An immersive 3D portfolio built with Three.js featuring a fully modelled computer room setup floating in space. Includes orbit controls, auto-rotation, a terminal loading screen, music toggle, and this macOS-style portfolio embedded on the back wall.</p>
+            <div class="project-tags">
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">JavaScript</span>
+              <span class="project-tag">Vite</span>
+              <span class="project-tag">GLTF / Draco</span>
+              <span class="project-tag">HTML / CSS</span>
+              <span class="project-tag">Canvas API</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930" target="_blank">GitHub →</a>
+            </div>
           </div>
         </div>
 
-      </div><!-- .content -->
-    </div><!-- .window-body -->
+      </div>
 
-    <div class="status-bar">
-      <span>© 2026 Riya — Coding with Ree'</span>
-      <span id="status-clock"></span>
+      <!-- SKILLS -->
+      <div class="section" id="sec-skills">
+        <h2>Skills &amp; Certifications</h2>
+        <hr class="divider">
+
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Skills</h3>
+
+        <div class="skills-cat">
+          <h4>DevOps &amp; Cloud</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">CI/CD Pipelines</span><span class="skill-tag">GitHub Actions</span>
+            <span class="skill-tag">Azure DevOps</span><span class="skill-tag">Docker</span>
+            <span class="skill-tag">Linux Admin</span><span class="skill-tag">Cloud Security</span>
+          </div>
+        </div>
+        <div class="skills-cat">
+          <h4>Development</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">React.js</span><span class="skill-tag">JavaScript ES6+</span>
+            <span class="skill-tag">TypeScript</span><span class="skill-tag">REST APIs</span>
+            <span class="skill-tag">Three.js</span><span class="skill-tag">WordPress</span>
+          </div>
+        </div>
+        <div class="skills-cat">
+          <h4>Security &amp; IT</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">Cybersecurity</span><span class="skill-tag">Network Security</span>
+            <span class="skill-tag">IAM</span><span class="skill-tag">Active Directory</span>
+            <span class="skill-tag">Microsoft 365</span><span class="skill-tag">Incident Response</span>
+          </div>
+        </div>
+        <div class="skills-cat">
+          <h4>Tools &amp; Workflow</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">GitHub</span><span class="skill-tag">Jira</span>
+            <span class="skill-tag">Postman</span><span class="skill-tag">Agile / SDLC</span>
+            <span class="skill-tag">Trello</span>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Certifications</h3>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(230,80,20,0.15);color:#ff6b35;">FCC</div>
+          <div class="cert-info">
+            <div class="cert-name">Frontend Development Libraries V8</div>
+            <div class="cert-issuer">freeCodeCamp</div>
+            <div class="cert-date">Issued Mar 2026 · Credential ID: riyariya-fedl</div>
+            <div class="cert-tags">
+              <span class="project-tag">React</span><span class="project-tag">Redux</span>
+              <span class="project-tag">Bootstrap</span><span class="project-tag">jQuery</span>
+              <span class="project-tag">JavaScript</span><span class="project-tag">Web Development</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(10,132,255,0.15);color:#4db8ff;">MS</div>
+          <div class="cert-info">
+            <div class="cert-name">Introduction to AI</div>
+            <div class="cert-issuer">Microsoft</div>
+            <div class="cert-date">Issued Mar 2026</div>
+            <div class="cert-tags">
+              <span class="project-tag">ML Fundamentals</span><span class="project-tag">Neural Networks</span>
+              <span class="project-tag">Practical AI</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(160,50,220,0.15);color:#bf5af2;">U</div>
+          <div class="cert-info">
+            <div class="cert-name">Machine Learning</div>
+            <div class="cert-issuer">Udemy</div>
+            <div class="cert-date">Credential ID: 0004</div>
+            <div class="cert-tags">
+              <span class="project-tag">ML Algorithms</span><span class="project-tag">Data Science</span>
+              <span class="project-tag">Predictive Modeling</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(220,50,50,0.15);color:#ff6b6b;">C+</div>
+          <div class="cert-info">
+            <div class="cert-name">CompTIA Network+</div>
+            <div class="cert-issuer">CompTIA Tech Career Academy</div>
+            <div class="cert-date">Issued Dec 2024 · Expires Dec 2027</div>
+            <div class="cert-tags">
+              <span class="project-tag">Networking</span><span class="project-tag">CompTIA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(39,166,80,0.15);color:#4cd964;">ISC2</div>
+          <div class="cert-info">
+            <div class="cert-name">Certified in Cybersecurity (CC)</div>
+            <div class="cert-issuer">ISC2</div>
+            <div class="cert-date">Issued Sep 2024 · Expires Sep 2027</div>
+            <div class="cert-tags">
+              <span class="project-tag">Cybersecurity</span><span class="project-tag">ISC2</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(10,102,194,0.2);color:#0a84ff;">in</div>
+          <div class="cert-info">
+            <div class="cert-name">Customer Handling</div>
+            <div class="cert-issuer">LinkedIn</div>
+            <div class="cert-date">Issued May 2024</div>
+            <div class="cert-tags">
+              <span class="project-tag">Customer Service</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(10,102,194,0.2);color:#0a84ff;">in</div>
+          <div class="cert-info">
+            <div class="cert-name">Communicating with Confidence</div>
+            <div class="cert-issuer">LinkedIn</div>
+            <div class="cert-date">Issued Jun 2021</div>
+            <div class="cert-tags">
+              <span class="project-tag">Communication</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LEADERSHIP & COMMUNITY IMPACT -->
+      <div class="section" id="sec-leadership">
+        <h2>Leadership &amp; Community Impact</h2>
+        <hr class="divider">
+
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Community Leadership</h3>
+
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Microsoft</span>
+            <span class="exp-date">Apr 2021 – Dec 2023 · 2 yrs 9 mos</span>
+          </div>
+          <div class="exp-role">Microsoft Learn Student Ambassador — Beta Member</div>
+          <ul>
+            <li>Engaged in 150+ global tech events representing Microsoft's student developer community.</li>
+            <li>Delivered 45 technical sessions on cloud, AI, and development tools to student audiences.</li>
+            <li>Collaborated with an international network of ambassadors to promote learning resources.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">Google</span>
+            <span class="exp-date">Aug 2021 – Aug 2022 · 1 yr 1 mo</span>
+          </div>
+          <div class="exp-role">Google Developer Student Club — Co-Lead · India, On-site</div>
+          <ul>
+            <li>Co-led the Google Developer Student Club chapter, organising events and workshops.</li>
+            <li>Mentored 300+ students through 20 workshops covering HTML, CSS, JavaScript, and CS fundamentals.</li>
+            <li>Facilitated hands-on projects to bridge the gap between academic learning and industry practice.</li>
+          </ul>
+        </div>
+
+        <hr class="divider">
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Creative Side</h3>
+
+        <div class="resume-card">
+          <div class="r-icon">▶️</div>
+          <div>
+            <strong>Coding with Ree'</strong>
+            <a href="https://www.youtube.com/@codewithree930" target="_blank">@codewithree930 on YouTube →</a>
+          </div>
+        </div>
+        <p style="color:rgba(255,255,255,0.35);font-style:italic;margin-top:12px;">More content coming soon.</p>
+      </div>
+
+<!-- CONTACT -->
+      <div class="section" id="sec-contact">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <h2>Contact</h2>
+          <div class="social-row">
+            <a class="social-btn" href="https://github.com/reerajput930" target="_blank">GH</a>
+            <a class="social-btn" href="https://www.linkedin.com/in/riya-rajput-23400a200/" target="_blank">in</a>
+            <a class="social-btn" href="https://www.youtube.com/@codewithree930" target="_blank">YT</a>
+          </div>
+        </div>
+        <hr class="divider">
+        <p>Open for opportunities, collaborations, or just a hello!</p>
+        <p><span style="color:rgba(255,255,255,0.35);font-size:12px;">EMAIL</span><br>
+        <a href="mailto:rajputriya930@gmail.com">rajputriya930@gmail.com</a></p>
+        <hr class="divider">
+        <div class="contact-form">
+          <label>Your name</label>
+          <input type="text" placeholder="Name">
+          <label>Email</label>
+          <input type="email" placeholder="Email">
+          <label>Company (optional)</label>
+          <input type="text" placeholder="Company">
+          <label>Message</label>
+          <textarea placeholder="Message"></textarea>
+          <button class="mac-btn">Send Message</button>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
 
-  </div><!-- #win95-window -->
-</div><!-- #desktop -->
-
-<!-- Taskbar -->
-<div id="taskbar">
-  <button class="start-btn">▶ Start</button>
-  <button class="taskbar-win-btn" onclick="toggleWindow()">📁 My Showcase</button>
-  <div class="taskbar-clock" id="taskbar-clock"></div>
+<!-- Dock -->
+<div id="mac-dock">
+  <a class="dock-item" href="https://github.com/reerajput930" target="_blank" title="GitHub">💻</a>
+  <a class="dock-item" href="https://www.linkedin.com/in/riya-rajput-23400a200/" target="_blank" title="LinkedIn">🔗</a>
+  <a class="dock-item" href="https://www.youtube.com/@codewithree930" target="_blank" title="YouTube">▶️</a>
+  <div class="dock-sep"></div>
+  <a class="dock-item" href="/Riya_Functional_Resume_Dev.pdf" download title="Resume">📄</a>
 </div>
 
 <script>
-  let isOpen = true;
-
   function showSection(name, el) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
@@ -554,28 +938,18 @@
   }
 
   function closeWindow() {
-    document.getElementById('win95-window').style.display = 'none';
-    isOpen = false;
-  }
-  function minimizeWindow() {
-    document.getElementById('win95-window').style.display = 'none';
-    isOpen = false;
-  }
-  function openWindow() {
-    document.getElementById('win95-window').style.display = 'flex';
-    isOpen = true;
-  }
-  function toggleWindow() {
-    isOpen ? minimizeWindow() : openWindow();
+    const w = document.getElementById('mac-window');
+    w.style.opacity = '0';
+    w.style.transform = 'scale(0.96)';
+    setTimeout(() => w.style.display = 'none', 200);
   }
 
-  function updateClock() {
-    const t = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('taskbar-clock').textContent = t;
-    document.getElementById('status-clock').textContent = t;
+  function minimizeWindow() {
+    const w = document.getElementById('mac-window');
+    w.style.opacity = '0';
+    w.style.transform = 'scale(0.94) translateY(20px)';
+    setTimeout(() => w.style.display = 'none', 200);
   }
-  updateClock();
-  setInterval(updateClock, 1000);
 </script>
 </body>
 </html>

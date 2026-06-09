@@ -10,6 +10,12 @@
 <title>REE'</title>
   </head>
   <style>
+    * { cursor: none !important; }
+    #music, #click, #portfolio-nav-btn, #portfolio-close,
+    .start-btn, .win-btn, .win95-btn, .sidebar nav a,
+    .taskbar-win-btn, button { cursor: pointer !important; }
+    body.wall-hover canvas.cubeCanvas { cursor: pointer !important; }
+
     body {
       margin: 0px;
       padding: 0px;
@@ -58,6 +64,7 @@
     }
     img{
         height: 2rem;
+        pointer-events: none;
     }
     #music{
         margin-right: 15px;
@@ -239,25 +246,198 @@
      background: #008080;
    }
 
-   @media (max-width: 600px) {
-     .left_details{
-        margin-top: 1rem;
-        margin-left: 1rem;
-        position: fixed;
+   /* Custom cursor */
+   #cursor {
+     position: fixed;
+     width: 10px; height: 10px;
+     border-radius: 50%;
+     background: #fff;
+     box-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,0.6);
+     pointer-events: none;
+     transform: translate(-50%, -50%);
+     z-index: 999999;
+   }
+   #cursor-ring {
+     position: fixed;
+     width: 32px; height: 32px;
+     border-radius: 50%;
+     border: 1px solid rgba(255,255,255,0.45);
+     pointer-events: none;
+     transform: translate(-50%, -50%);
+     z-index: 999998;
+   }
+   .trail-dot {
+     position: fixed;
+     border-radius: 50%;
+     pointer-events: none;
+     z-index: 999997;
+     transform: translate(-50%, -50%);
+     background: #fff;
+     box-shadow: 0 0 4px rgba(255,255,255,0.7);
+   }
+   body.cursor-hover #cursor {
+     width: 16px; height: 16px;
+     background: #fff;
+     box-shadow: 0 0 14px #fff, 0 0 30px rgba(255,255,255,0.7);
+     transition: width 0.15s, height 0.15s, box-shadow 0.15s;
+   }
+   body.cursor-hover #cursor-ring {
+     width: 44px; height: 44px;
+     border-color: rgba(255,255,255,0.8);
+     transition: width 0.15s, height 0.15s, border-color 0.15s;
+   }
+   body.cursor-click #cursor {
+     width: 6px; height: 6px;
+     background: #aef;
+     box-shadow: 0 0 12px #aef, 0 0 28px rgba(170,238,255,0.8);
+   }
+   body.cursor-click #cursor-ring {
+     width: 48px; height: 48px;
+     border-color: rgba(170,238,255,0.55);
+     transition: width 0.15s, height 0.15s, border-color 0.15s;
+   }
+
+   /* ── Tablet ── */
+   @media (max-width: 768px) {
+     .left_details {
+       margin-top: 1.2rem;
+       margin-left: 1.5rem;
      }
-      div{
-           font-size: 13px;
-        
-    font-weight:bold;
-    letter-spacing: 3px;
-    }
-    .right_details {
-      bottom: 2rem;
-    }
-    #name{
-      font-size: 2rem;
-    }
-  }
+     #name { font-size: 2rem; }
+     div { letter-spacing: 3px; font-size: 13px; }
+
+     .right_details {
+       margin-top: 1.2rem;
+       margin-right: 0.75rem;
+     }
+     .right_details div { font-size: 11px; letter-spacing: 2px; margin-top: 5px; }
+
+     #constellation-panel {
+       width: 260px;
+       height: 300px;
+       right: 8px;
+       bottom: 60px;
+     }
+     .c-circle { width: 58px; height: 58px; }
+     .c-circle img { width: 38px; height: 38px; }
+     .c-title { font-size: 8px; letter-spacing: 2px; }
+     .c-label { font-size: 8px; }
+
+     #portfolio-window { width: 96vw; height: 92vh; }
+
+     #portfolio-nav-btn { bottom: 16px; left: 16px; font-size: 9px; padding: 6px 12px; }
+   }
+
+   /* ── Mobile ── */
+   @media (max-width: 480px) {
+     /* Hide 3D canvas and cursor */
+     canvas.cubeCanvas { display: none; }
+     #cursor, #cursor-ring, .trail-dot { display: none; }
+     * { cursor: auto !important; }
+
+     body {
+       overflow-y: auto;
+       height: auto;
+       min-height: 100vh;
+       display: flex;
+       flex-direction: column;
+     }
+
+     /* Full-screen mobile hero layout */
+     .left_details {
+       position: relative;
+       margin: 0;
+       padding: 48px 24px 20px;
+       width: 100%;
+     }
+     #name { font-size: 2.4rem; letter-spacing: 4px; }
+     .left_details div { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+     #mu_cl { margin-top: 16px; }
+
+     /* Right titles: reposition below left details */
+     .right_details {
+       position: relative;
+       right: auto;
+       margin: 0;
+       padding: 0 24px 24px;
+       align-items: flex-start;
+       width: 100%;
+     }
+     .right_details div { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+
+     /* Constellation panel: full-width grid below */
+     #constellation-panel {
+       position: relative;
+       right: auto;
+       bottom: auto;
+       width: 100%;
+       height: auto;
+       padding: 16px 24px 24px;
+     }
+     .c-title {
+       display: block;
+       text-align: left;
+       font-size: 9px;
+       letter-spacing: 3px;
+       margin-bottom: 16px;
+       padding: 0;
+     }
+     #c-svg { display: none; }
+
+     /* Grid layout for brand nodes */
+     .c-node {
+       position: relative !important;
+       left: auto !important;
+       top: auto !important;
+       transform: none !important;
+       animation: none !important;
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       margin: 8px;
+     }
+     /* Wrap nodes in a flex grid */
+     #constellation-panel {
+       display: flex;
+       flex-direction: column;
+     }
+     #constellation-panel > .c-node {
+       display: inline-flex;
+     }
+     .mobile-brands-grid {
+       display: flex;
+       flex-wrap: wrap;
+       justify-content: center;
+       gap: 12px;
+     }
+     .c-circle { width: 60px; height: 60px; }
+     .c-circle img { width: 40px; height: 40px; }
+     .c-label {
+       color: rgba(255,255,255,0.55) !important;
+       font-size: 9px;
+       display: block;
+     }
+
+     /* Portfolio button — big and centered */
+     #portfolio-nav-btn {
+       position: relative;
+       bottom: auto;
+       left: auto;
+       width: calc(100% - 48px);
+       margin: 8px 24px 40px;
+       padding: 14px 0;
+       font-size: 12px;
+       letter-spacing: 4px;
+       text-align: center;
+       border: 1px solid rgba(255,255,255,0.6);
+     }
+
+     /* Portfolio overlay full-screen */
+     #portfolio-window { width: 100vw; height: 100vh; border: none; }
+
+     /* Show disclaimer */
+     #mobile-disclaimer { display: block !important; }
+   }
   </style>
   <body>
 
@@ -324,7 +504,8 @@
 
 
 
-    <button id="portfolio-nav-btn" onclick="window.goToWall && window.goToWall()">PORTFOLIO</button>
+    <button id="portfolio-nav-btn" onclick="if(window.innerWidth<=480){window.location.href='/portfolio.html'}else{window.goToWall&&window.goToWall()}">PORTFOLIO</button>
+    <div id="mobile-disclaimer" style="display:none;text-align:center;color:rgba(255,255,255,0.25);font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:0 24px 24px;">⚠ BEST EXPERIENCED ON DESKTOP</div>
 
     <!-- Portfolio overlay popup -->
     <div id="portfolio-overlay">
@@ -391,32 +572,127 @@ setInterval(() => {
 
 </script>
 
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
   <!-- Constellation logos panel -->
   <div id="constellation-panel">
     <div class="c-title">BRANDS I WORKED WITH</div>
     <svg id="c-svg"></svg>
 
-    <div class="c-node" style="left:50%;top:22%" data-id="0">
-      <div class="c-circle"><img src="/logos/Tech Info.png" alt="Tech Info"></div>
-      <div class="c-label">Tech Info</div>
-    </div>
-    <div class="c-node" style="left:18%;top:46%" data-id="1">
-      <div class="c-circle"><img src="/logos/Genieall.png" alt="Genieall"></div>
-      <div class="c-label">Genieall</div>
-    </div>
-    <div class="c-node" style="left:82%;top:44%" data-id="2">
-      <div class="c-circle"><img src="/logos/youtube.png" alt="YouTube"></div>
-      <div class="c-label">YouTube</div>
-    </div>
-    <div class="c-node" style="left:32%;top:74%" data-id="3">
-      <div class="c-circle"><img src="/logos/microsoft.png" alt="Microsoft"></div>
-      <div class="c-label">Microsoft</div>
-    </div>
-    <div class="c-node" style="left:70%;top:76%" data-id="4">
-      <div class="c-circle"><img src="/logos/google.png" alt="Google"></div>
-      <div class="c-label">Google</div>
+    <div class="mobile-brands-grid">
+      <div class="c-node" style="left:50%;top:22%" data-id="0">
+        <div class="c-circle"><img src="/logos/Tech Info.png" alt="Tech Info"></div>
+        <div class="c-label">Tech Info</div>
+      </div>
+      <div class="c-node" style="left:18%;top:46%" data-id="1">
+        <div class="c-circle"><img src="/logos/Genieall.png" alt="Genieall"></div>
+        <div class="c-label">Genieall</div>
+      </div>
+      <div class="c-node" style="left:82%;top:44%" data-id="2">
+        <div class="c-circle"><img src="/logos/youtube.png" alt="YouTube"></div>
+        <div class="c-label">YouTube</div>
+      </div>
+      <div class="c-node" style="left:32%;top:74%" data-id="3">
+        <div class="c-circle"><img src="/logos/microsoft.png" alt="Microsoft"></div>
+        <div class="c-label">Microsoft</div>
+      </div>
+      <div class="c-node" style="left:70%;top:76%" data-id="4">
+        <div class="c-circle"><img src="/logos/google.png" alt="Google"></div>
+        <div class="c-label">Google</div>
+      </div>
     </div>
   </div>
+
+  <script>
+    // Custom cursor
+    const TRAIL_COUNT = 12;
+    const cursorEl   = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    const trailDots  = [];
+
+    for (let i = 0; i < TRAIL_COUNT; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('trail-dot');
+      const size = Math.max(1.5, 5 - i * 0.3);
+      dot.style.width   = size + 'px';
+      dot.style.height  = size + 'px';
+      dot.style.opacity = (1 - i / TRAIL_COUNT) * 0.5;
+      document.body.appendChild(dot);
+      trailDots.push({ el: dot, x: 0, y: 0 });
+    }
+
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      cursorEl.style.left = mx + 'px';
+      cursorEl.style.top  = my + 'px';
+    });
+
+    document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+    document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-click'));
+
+    // Hide custom cursor on UI buttons, show real pointer
+    function hideCursor() {
+      cursorEl.style.opacity = '0';
+      cursorRing.style.opacity = '0';
+      trailDots.forEach(d => d.el.style.opacity = '0');
+    }
+    function showCursor() {
+      cursorEl.style.opacity = '1';
+      cursorRing.style.opacity = '1';
+      trailDots.forEach((d, i) => d.el.style.opacity = (1 - i / TRAIL_COUNT) * 0.5);
+    }
+
+    ['music', 'click', 'portfolio-nav-btn', 'portfolio-close'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('mouseenter', hideCursor);
+        el.addEventListener('mouseleave', showCursor);
+      }
+    });
+
+    document.querySelectorAll('.win-btn, .win95-btn, button').forEach(el => {
+      el.addEventListener('mouseenter', hideCursor);
+      el.addEventListener('mouseleave', showCursor);
+    });
+
+    // Hover state on interactive elements
+    const hoverTargets = 'a, .c-node, #portfolio-nav-btn';
+    document.querySelectorAll(hoverTargets).forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+    // Called from three.js on wall hover
+    window.setWallHover = function(active) {
+      document.body.classList.toggle('wall-hover', active);
+      cursorEl.style.opacity   = active ? '0' : '1';
+      cursorRing.style.opacity = active ? '0' : '1';
+      trailDots.forEach((d, i) => d.el.style.opacity = active ? '0' : (1 - i / TRAIL_COUNT) * 0.5);
+    };
+
+    (function animateCursor() {
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+
+      trailDots[0].x += (mx - trailDots[0].x) * 0.35;
+      trailDots[0].y += (my - trailDots[0].y) * 0.35;
+      trailDots[0].el.style.left = trailDots[0].x + 'px';
+      trailDots[0].el.style.top  = trailDots[0].y + 'px';
+
+      for (let i = 1; i < TRAIL_COUNT; i++) {
+        trailDots[i].x += (trailDots[i-1].x - trailDots[i].x) * 0.45;
+        trailDots[i].y += (trailDots[i-1].y - trailDots[i].y) * 0.45;
+        trailDots[i].el.style.left = trailDots[i].x + 'px';
+        trailDots[i].el.style.top  = trailDots[i].y + 'px';
+      }
+      requestAnimationFrame(animateCursor);
+    })();
+  </script>
 
   <script>
     const C_CONNECTIONS = [[0,1],[0,2],[0,3],[0,4],[1,3],[2,4],[3,4],[1,2]];

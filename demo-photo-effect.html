@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Photo Effect Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f;
+    font-family: 'Courier New', monospace;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 48px;
+  }
+  h1 { font-size: 13px; letter-spacing: 4px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+
+  .row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* --- Effect containers --- */
+  .frame {
+    width: 220px;
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  canvas { display: block; width: 220px; height: 280px; }
+
+  /* Effect 3 — CSS glitch */
+  .glitch-wrap {
+    width: 220px; height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  .glitch-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: grayscale(1) contrast(1.2);
+  }
+  .glitch-wrap::before,
+  .glitch-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    background-image: inherit;
+  }
+  .glitch-layer {
+    position: absolute;
+    inset: 0;
+    background-image: url('/me.png');
+    background-size: cover;
+    background-position: top center;
+    filter: grayscale(1) contrast(1.2);
+    mix-blend-mode: screen;
+    animation: glitch-r 3s infinite;
+  }
+  .glitch-layer.b {
+    filter: grayscale(1) contrast(1.2) hue-rotate(180deg);
+    animation: glitch-b 3s infinite 0.05s;
+  }
+  @keyframes glitch-r {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    91% { transform: translate(-4px, 2px); opacity: 0.6; clip-path: inset(20% 0 50% 0); }
+    93% { transform: translate(4px, -1px); opacity: 0.5; clip-path: inset(60% 0 10% 0); }
+    95% { transform: translate(-2px, 3px); opacity: 0.7; clip-path: inset(40% 0 30% 0); }
+  }
+  @keyframes glitch-b {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(5px, -2px); opacity: 0.5; clip-path: inset(30% 0 40% 0); }
+    94% { transform: translate(-3px, 1px); opacity: 0.6; clip-path: inset(10% 0 70% 0); }
+  }
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.25) 3px,
+      rgba(0,0,0,0.25) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Effect 4 — duotone CSS */
+  .duotone-wrap {
+    width: 220px; height: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .duotone-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: grayscale(1) contrast(1.1) brightness(0.9);
+  }
+  .duotone-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(10,132,255,0.55) 0%, rgba(191,90,242,0.45) 100%);
+    mix-blend-mode: color;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Pick your effect — me.png</h1>
+
+<div class="row">
+
+  <!-- Effect 1: Pixelated -->
+  <div class="card">
+    <div class="frame">
+      <canvas id="c1"></canvas>
+    </div>
+    <div class="label">1 · Pixel / 8-bit</div>
+  </div>
+
+  <!-- Effect 2: Matrix scan -->
+  <div class="card">
+    <div class="frame">
+      <canvas id="c2"></canvas>
+    </div>
+    <div class="label">2 · Matrix scan</div>
+  </div>
+
+  <!-- Effect 3: Glitch -->
+  <div class="card">
+    <div class="glitch-wrap">
+      <img src="/me.png" alt="me">
+      <div class="glitch-layer"></div>
+      <div class="glitch-layer b"></div>
+      <div class="scanlines"></div>
+    </div>
+    <div class="label">3 · Glitch + scanlines</div>
+  </div>
+
+  <!-- Effect 4: Duotone -->
+  <div class="card">
+    <div class="duotone-wrap">
+      <img src="/me.png" alt="me">
+    </div>
+    <div class="label">4 · Duotone blue/purple</div>
+  </div>
+
+</div>
+
+<script>
+  const SRC = '/me.png';
+  const W = 440, H = 560; // native canvas res (2x for sharp)
+
+  function loadImg(cb) {
+    const img = new Image();
+    img.onload = () => cb(img);
+    img.src = SRC;
+  }
+
+  /* ── Effect 1: Pixelate ── */
+  loadImg(img => {
+    const c = document.getElementById('c1');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+    const BLOCK = 14;
+    // draw small then scale up
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, W / BLOCK, H / BLOCK);
+    ctx.drawImage(c, 0, 0, W / BLOCK, H / BLOCK, 0, 0, W, H);
+    // tint overlay
+    ctx.fillStyle = 'rgba(10,132,255,0.18)';
+    ctx.fillRect(0, 0, W, H);
+    // grid lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += BLOCK) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += BLOCK) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  });
+
+  /* ── Effect 2: Matrix / green scanline ── */
+  loadImg(img => {
+    const c = document.getElementById('c2');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+
+    // greyscale
+    ctx.drawImage(img, 0, 0, W, H);
+    const px = ctx.getImageData(0, 0, W, H);
+    for (let i = 0; i < px.data.length; i += 4) {
+      const g = 0.299*px.data[i] + 0.587*px.data[i+1] + 0.114*px.data[i+2];
+      px.data[i] = 0;
+      px.data[i+1] = g * 0.85;
+      px.data[i+2] = 0;
+    }
+    ctx.putImageData(px, 0, 0);
+
+    // scanlines
+    for (let y = 0; y < H; y += 3) {
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(0, y, W, 1);
+    }
+
+    // green glow vignette
+    const grad = ctx.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,H*0.75);
+    grad.addColorStop(0, 'rgba(0,255,70,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.65)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  });
+</script>
+</body>
+</html>

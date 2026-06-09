@@ -156,100 +156,150 @@ loader.load(url, (gltf) => {
     finishLoading();
     finishLoadingPercent()
 
-    // build win95 desktop canvas texture for back wall
+    // macOS dark canvas texture for back wall
     const wc = document.createElement('canvas');
     wc.width = 1024; wc.height = 1024;
     const ctx = wc.getContext('2d');
 
-    // desktop background fills entire canvas
-    ctx.fillStyle = '#008080';
+    // dark desktop background
+    ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, wc.width, wc.height);
 
-    // large centered portfolio window
-    const wx = 120, wy = 80, ww = 780, wh = 700;
+    // macOS window
+    const wx = 80, wy = 60, ww = 860, wh = 780;
     // window shadow
-    ctx.fillStyle = '#005555';
-    ctx.fillRect(wx + 6, wy + 6, ww, wh);
-    // window body
-    ctx.fillStyle = '#c0c0c0';
-    ctx.fillRect(wx, wy, ww, wh);
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 40;
+    ctx.fillStyle = '#1c1c1e';
+    ctx.beginPath();
+    ctx.roundRect(wx, wy, ww, wh, 12);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
     // title bar
-    ctx.fillStyle = '#000080';
-    ctx.fillRect(wx + 2, wy + 2, ww - 4, 36);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 18px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText('Riya  -  Portfolio 2026', wx + 12, wy + 26);
-    // window control buttons
-    [[ww - 24, '×'], [ww - 48, '□'], [ww - 72, '_']].forEach(([bx, sym]) => {
-      ctx.fillStyle = '#c0c0c0';
-      ctx.fillRect(wx + bx, wy + 6, 20, 22);
-      ctx.fillStyle = '#808080';
-      ctx.strokeStyle = '#808080';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(wx + bx, wy + 6, 20, 22);
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 14px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(sym, wx + bx + 10, wy + 22);
-    });
-    // white content area
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(wx + 4, wy + 40, ww - 8, wh - 44);
+    ctx.fillStyle = '#2c2c2e';
+    ctx.beginPath();
+    ctx.roundRect(wx, wy, ww, 44, [12, 12, 0, 0]);
+    ctx.fill();
 
-    // portfolio content inside window
-    ctx.fillStyle = '#000080';
-    ctx.font = 'bold 72px Arial';
+    // title bar border
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(wx, wy + 44);
+    ctx.lineTo(wx + ww, wy + 44);
+    ctx.stroke();
+
+    // traffic lights
+    const tlY = wy + 22;
+    [['#ff5f56', wx+20], ['#ffbd2e', wx+40], ['#27c93f', wx+60]].forEach(([color, x]) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, tlY, 7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // window title
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '500 16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('RIYA', wx + ww / 2, wy + 160);
+    ctx.fillText("Riya — Portfolio 2026", wx + ww / 2, wy + 28);
 
-    ctx.fillStyle = '#444444';
-    ctx.font = '26px Arial';
-    ctx.fillText('UI/UX Designer  •  Developer  •  3D Artist', wx + ww / 2, wy + 210);
+    // sidebar
+    ctx.fillStyle = '#232325';
+    ctx.fillRect(wx, wy + 44, 180, wh - 44);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(wx + 180, wy + 44);
+    ctx.lineTo(wx + 180, wy + wh);
+    ctx.stroke();
 
-    ctx.fillStyle = '#aaaaaa';
-    ctx.fillRect(wx + 60, wy + 228, ww - 120, 2);
-
-    // nav links
-    ['ABOUT', 'PROJECTS', 'SKILLS', 'CONTACT'].forEach((item, i) => {
-      ctx.fillStyle = '#0000cc';
-      ctx.font = 'bold 24px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(item, wx + 130 + i * 175, wy + 310);
-      ctx.fillStyle = '#0000cc';
-      ctx.fillRect(wx + 130 + i * 175 - 38, wy + 316, 76, 2);
-    });
-
-    ctx.fillStyle = '#888888';
-    ctx.font = '20px Arial';
+    // sidebar avatar circle
+    ctx.fillStyle = '#0a84ff';
+    ctx.beginPath();
+    ctx.arc(wx + 90, wy + 104, 28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText("Coding with Ree'  •  Ontario, Canada", wx + ww / 2, wy + 640);
+    ctx.fillText('R', wx + 90, wy + 113);
 
-    // left desktop icons
-    ['Projects', 'About', 'Skills', 'Contact'].forEach((label, i) => {
-      const ix = 18, iy = 60 + i * 160;
-      ctx.fillStyle = '#c0c0c0';
-      ctx.fillRect(ix, iy, 88, 68);
-      ctx.fillStyle = '#000080';
-      ctx.fillRect(ix + 5, iy + 5, 78, 44);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(label, ix + 44, iy + 88);
+    // sidebar name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px Arial';
+    ctx.fillText('Riya', wx + 90, wy + 150);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '12px Arial';
+    ctx.fillText("Coding with Ree'", wx + 90, wy + 170);
+
+    // sidebar nav items
+    const navItems = ['Home', 'About', 'Experience', 'Projects', 'Skills', 'Contact'];
+    navItems.forEach((item, i) => {
+      const ny = wy + 210 + i * 44;
+      if (i === 0) {
+        ctx.fillStyle = 'rgba(10,132,255,0.2)';
+        ctx.beginPath();
+        ctx.roundRect(wx + 8, ny - 14, 164, 30, 6);
+        ctx.fill();
+        ctx.fillStyle = '#4db8ff';
+      } else {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      }
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(item, wx + 24, ny + 6);
     });
 
-    // taskbar
-    const tbH = 56;
-    ctx.fillStyle = '#c0c0c0';
-    ctx.fillRect(0, wc.height - tbH, wc.width, tbH);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, wc.height - tbH, wc.width, 2);
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 18px Arial';
+    // content area
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 56px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Welcome', wx + 180 + (ww - 180) / 2, wy + 140);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '22px Arial';
+    ctx.fillText("I'm Riya", wx + 180 + (ww - 180) / 2, wy + 178);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(wx + 200, wy + 200);
+    ctx.lineTo(wx + ww - 20, wy + 200);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '15px Arial';
+    const bio = 'DevOps-oriented developer  •  2+ years experience  •  Ontario, Canada';
+    ctx.fillText(bio, wx + 180 + (ww - 180) / 2, wy + 250);
+
+    // resume card
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(wx + 200, wy + 290, ww - 220, 64, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 15px Arial';
     ctx.textAlign = 'left';
-    ctx.fillText('> Start', 14, wc.height - 18);
-    ctx.textAlign = 'right';
-    ctx.fillText('12:27 PM', wc.width - 14, wc.height - 18);
+    ctx.fillText('📄  Resume — Download PDF →', wx + 228, wy + 330);
+
+    // dock
+    const dockW = 240, dockH = 52, dockX = wx + ww/2 - dockW/2, dockY = wy + wh - 70;
+    ctx.fillStyle = 'rgba(40,40,44,0.75)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(dockX, dockY, dockW, dockH, 14);
+    ctx.fill();
+    ctx.stroke();
+    ['💻','🔗','▶️','📄'].forEach((icon, i) => {
+      ctx.font = '22px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(icon, dockX + 32 + i * 56, dockY + 34);
+    });
 
     const wallTexture = new THREE.CanvasTexture(wc);
     wallTexture.repeat.set(-1, 1);
@@ -362,8 +412,15 @@ canva.addEventListener('click', (e) => {
   mouse.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
   mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
-  if (raycaster.intersectObject(wallPlaneMesh).length > 0) {
-    document.getElementById('portfolio-overlay').style.display = 'flex';
+  const hits = raycaster.intersectObject(wallPlaneMesh);
+  if (hits.length > 0) {
+    // only open if camera is on the visible (front) side of the wall
+    const worldNormal = hits[0].face.normal.clone()
+      .transformDirection(wallPlaneMesh.matrixWorld);
+    const toCamera = camera.position.clone().sub(hits[0].point).normalize();
+    if (worldNormal.dot(toCamera) < 0) {
+      document.getElementById('portfolio-overlay').style.display = 'flex';
+    }
   }
 });
 
@@ -374,5 +431,7 @@ canva.addEventListener('mousemove', (e) => {
   mouse.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
   mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
-  canva.style.cursor = raycaster.intersectObject(wallPlaneMesh).length > 0 ? 'pointer' : 'default';
+  const hovered = raycaster.intersectObject(wallPlaneMesh).length > 0;
+  canva.style.cursor = hovered ? 'pointer' : 'default';
+  if (window.setWallHover) window.setWallHover(hovered);
 });
