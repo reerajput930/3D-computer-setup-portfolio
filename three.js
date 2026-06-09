@@ -22,9 +22,20 @@ function finishLoadingPercent() {
 }
 const loadingManager = new THREE.LoadingManager();
 
+// Fake ramp: 0→18% in 800ms so the bar moves immediately on first paint
+let fakePercent = 0;
+let realStarted = false;
+const fakeRamp = setInterval(() => {
+  if (realStarted) { clearInterval(fakeRamp); return; }
+  fakePercent = Math.min(fakePercent + 3, 18);
+  updateProgress(fakePercent);
+  if (fakePercent >= 18) clearInterval(fakeRamp);
+}, 80);
 
 loadingManager.onProgress = (url, loaded, total) => {
   if (total > 0) {
+    realStarted = true;
+    clearInterval(fakeRamp);
     const percent = (loaded / total) * 100;
     updateProgress(percent);
   }
