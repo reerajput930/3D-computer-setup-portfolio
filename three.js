@@ -6,53 +6,15 @@ import { AxesHelper } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { LoadingManager } from 'three'
 
-const progressText = document.getElementById('progress-text');
-
 if (window.innerWidth <= 480) {
   // Mobile: expose dummy goToWall so PORTFOLIO button doesn't error, then stop
   window.goToWall = () => {};
   throw new Error('mobile');
 }
 
-// Function to update progress (0 to 100)
-function updateProgress(percent) {
-  // console.log("safepercent",percent)
-  // const safePercent = Math.min(100, Math.max(0, percent));
-  progressText.textContent = Math.round(percent) + '%';
-}
-
-function finishLoadingPercent() {
-  // Jump to 100% in case it didn't reach exactly
-  updateProgress(100);
-  
-}
 const loadingManager = new THREE.LoadingManager();
 
-// Fake ramp: 0→18% in 800ms so the bar moves immediately on first paint
-let fakePercent = 0;
-let realStarted = false;
-const fakeRamp = setInterval(() => {
-  if (realStarted) { clearInterval(fakeRamp); return; }
-  fakePercent = Math.min(fakePercent + 3, 18);
-  updateProgress(fakePercent);
-  if (fakePercent >= 18) clearInterval(fakeRamp);
-}, 80);
-
-loadingManager.onProgress = (url, loaded, total) => {
-  if (total > 0) {
-    realStarted = true;
-    clearInterval(fakeRamp);
-    const percent = (loaded / total) * 100;
-    updateProgress(percent);
-  }
-};
-
-loadingManager.onLoad = () => {
-  finishLoadingPercent();
-};
-
 loadingManager.onError = (url) => {
-  progressText.textContent = 'Error';
   console.error('Loading error:', url);
 };
 
@@ -78,61 +40,333 @@ console.log(canva)
 const terminal = document.getElementById('loading-terminal');
 const codeLines = document.getElementById('code-lines');
 
-// Fake code snippets to "type" out (random-ish onboarding simulation)
-const fakeCodeSnippets = [
-   "> Finalizing welcome protocol...",
-   "> Scanning user vibe - friendly human connection detected...",
-   "> Loading personality matrix...",
-  "> Sarcasm level: 87%, - Charm factor: MAX.....",
-   "> Compiling reality shaders   - Glow intensity: high",
-   "> Mounting virtual desk assets...",
-  "  - Ring light calibration [COMPLETE]",
-  "> System getting ready, fasten your seat belt.........",
-  "> Access granted. Initiating immersion......"
+// ───────────────────────────────────────────────
+// Boot sequence — a system check of Riya's certs and help desk skills,
+// not decoration (spec p.2). Each line types in, check items pop an
+// [ OK ] / [ FAIL ] badge, and Coffee fails once before retrying.
+// ───────────────────────────────────────────────
+
+let uiAudioCtx = null;
+function getUiAudioCtx() {
+  if (!uiAudioCtx) uiAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (uiAudioCtx.state === 'suspended') uiAudioCtx.resume();
+  return uiAudioCtx;
+}
+function playTone({ freq, duration, type = 'sine', gain = 0.25, freqEnd = null, delay = 0 }) {
+  // Browsers block audio until the first click. Rather than schedule against
+  // a frozen (suspended) clock — which would queue sounds up and burst them
+  // all out of sync once the context finally resumes — just stay silent
+  // until the context is actually running.
+  const audioCtx = getUiAudioCtx();
+  if (audioCtx.state !== 'running') return;
+  const t0 = audioCtx.currentTime + delay;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (freqEnd) osc.frequency.linearRampToValueAtTime(freqEnd, t0 + duration);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(gain, t0 + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.02);
+}
+const sound = {
+  startup() { playTone({ freq: 760, duration: 0.18, type: 'square', gain: 0.22 }); },
+  tick() { playTone({ freq: 1200, duration: 0.02, type: 'square', gain: 0.07 }); },
+  ok() { playTone({ freq: 1500, duration: 0.08, gain: 0.18, freqEnd: 1800 }); },
+  fail() { playTone({ freq: 140, duration: 0.3, type: 'sawtooth', gain: 0.2, freqEnd: 95 }); },
+  keyClick() { playTone({ freq: 1800 + Math.random() * 400, duration: 0.015, type: 'square', gain: 0.12 }); },
+  accessChime() {
+    playTone({ freq: 700, duration: 0.12, gain: 0.22 });
+    playTone({ freq: 1050, duration: 0.18, gain: 0.22, delay: 0.09 });
+  },
+  blip() { playTone({ freq: 2000, duration: 0.03, gain: 0.12 }); },
+};
+// The network map's hover handling lives in index.html's own plain
+// script (same cross-script bridge pattern as window.goToWall below).
+window.reeosBlip = () => sound.blip();
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function typeInto(container, text, speed, tickSound) {
+  const lineEl = document.createElement('div');
+  // index.html has a blanket `div { font-family: Orbitron; font-weight: bolder;
+  // letter-spacing: 5px }` rule that directly matches any plain div like this one,
+  // which beats inheriting the container's intended monospace terminal styling.
+  // Force it back to "inherit" so it actually picks up the container's font.
+  lineEl.style.fontFamily = 'inherit';
+  lineEl.style.fontWeight = 'inherit';
+  lineEl.style.letterSpacing = 'inherit';
+  lineEl.style.color = 'inherit';
+  container.appendChild(lineEl);
+  for (let i = 0; i < text.length; i++) {
+    lineEl.textContent += text[i];
+    tickSound();
+    await sleep(speed);
+  }
+  container.scrollTop = container.scrollHeight;
+  return lineEl;
+}
+
+async function typeLine(text, speed = 12) {
+  return typeInto(codeLines, text, speed, sound.tick);
+}
+
+const DOT_COLUMN = 30;
+function dotsFor(label) {
+  return '.'.repeat(Math.max(1, DOT_COLUMN - label.length));
+}
+
+async function typeCheckLine(label) {
+  const lineEl = await typeLine(`${label} ${dotsFor(label)} `, 9);
+  return lineEl;
+}
+
+function popBadge(lineEl, status) {
+  const badge = document.createElement('span');
+  badge.className = status === 'OK' ? 'ok-badge' : 'fail-badge';
+  badge.textContent = status === 'OK' ? '[ OK ]' : '[ FAIL ]';
+  lineEl.appendChild(badge);
+  status === 'OK' ? sound.ok() : sound.fail();
+}
+
+const CHECK_LABELS = [
+  'CompTIA Network+',
+  'ISC2 CC',
+  'Help desk, Tier 1',
+  'Active Directory',
+  'Microsoft 365',
+  'Ticketing system',
+  'People skills (60+ a day)',
 ];
 
-// Typing animation settings
-let currentLineIndex = 0;
-let charIndex = 0;
-let typingSpeed = 0;     // ms per char (faster = 20–30, slower = 60+)
-let lineDelay = 0;      // pause after each line
+async function runBootSequence() {
+  sound.startup();
+  await typeLine('REE BIOS v2026  (C) Riya Inc.', 10);
+  await typeLine('Running system check...', 12);
+  codeLines.appendChild(document.createElement('br'));
 
-function typeNextChar() {
-  if (currentLineIndex >= fakeCodeSnippets.length) {
-    // All lines done → keep blinking cursor or wait for real load finish
-    codeLines.innerHTML += '<span class="cursor"></span>';
-    return;
+  for (const label of CHECK_LABELS) {
+    const lineEl = await typeCheckLine(label);
+    popBadge(lineEl, 'OK');
+    await sleep(90);
   }
 
-  const currentLine = fakeCodeSnippets[currentLineIndex];
+  // Coffee fails once, retries, then passes — the small joke IT people will get.
+  let coffeeLine = await typeCheckLine('Coffee');
+  popBadge(coffeeLine, 'FAIL');
+  await sleep(260);
+  await typeLine('Retrying...', 14);
+  await sleep(180);
+  coffeeLine = await typeCheckLine('Coffee');
+  popBadge(coffeeLine, 'OK');
+  await sleep(90);
 
-if (charIndex < currentLine.length) {
-    // Add one char
-    codeLines.innerHTML += currentLine[charIndex];
-    charIndex++;
-    setTimeout(typeNextChar, typingSpeed);
-  } else {
-    // Line finished → add newline + cursor, move to next
-    codeLines.innerHTML += '<br>';
-    charIndex = 0;
-    currentLineIndex++;
-    
-    // Scroll to bottom
-    codeLines.scrollTop = codeLines.scrollHeight;
-    
-    setTimeout(typeNextChar, lineDelay);
-  }
+  codeLines.appendChild(document.createElement('br'));
+  await typeLine('Open tickets: 0', 10);
+  await typeLine('Location detected: Toronto ON', 10);
+  await typeLine('All systems ready. Booting ReeOS...', 12);
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  codeLines.appendChild(cursor);
 }
-// Start the fake typing immediately
-typeNextChar();
+// Start the boot sequence immediately, and don't let the room appear
+// until the whole script has finished typing (with its sound), even if
+// the GLB finishes loading sooner.
+const bootSequenceDone = runBootSequence();
+let modelLoaded = false;
 
 // ───────────────────────────────────────────────
 // Call this when your real loading is 100% done (e.g. from LoadingManager.onLoad)
 function finishLoading() {
-  
+  modelLoaded = true;
+  bootSequenceDone.then(() => {
+    if (!modelLoaded) return;
     terminal.style.display = 'none';
-  
+    document.getElementById('login-screen').classList.add('visible');
+  });
 }
+
+// ───────────────────────────────────────────────
+// Login screen (spec p.3). The old corner job titles and the old
+// name/location/clock block move into the status bar and user card —
+// hide them from the room. This file only runs on desktop (mobile
+// throws out at the top), so mobile's own layout is untouched.
+// ───────────────────────────────────────────────
+const oldTitles = document.querySelector('.right_details');
+if (oldTitles) oldTitles.style.display = 'none';
+const oldDetails = document.querySelector('.left_details');
+if (oldDetails) oldDetails.style.display = 'none';
+
+// The network map panel is shared with the mobile hero layout, so it can't
+// default to hidden in CSS (mobile never runs this file to reveal it again).
+// Hide it here instead, desktop-only, until the room + four corners appear.
+const networkMapPanel = document.getElementById('constellation-panel');
+if (networkMapPanel) networkMapPanel.style.display = 'none';
+
+const loginScreen = document.getElementById('login-screen');
+const ticketCard = document.getElementById('login-ticket-card');
+const ticketLines = document.getElementById('login-ticket-lines');
+const statusBar = document.getElementById('status-bar');
+const ticketQueuePanel = document.getElementById('ticket-queue-panel');
+let doorOpened = false;
+let forgotPasswordClicked = false;
+
+// ───────────────────────────────────────────────
+// Room + four corners (spec p.4). Appear together once the door opens.
+// ───────────────────────────────────────────────
+function showRoomCorners() {
+  statusBar.classList.add('visible');
+  ticketQueuePanel.classList.add('visible');
+  if (networkMapPanel) networkMapPanel.style.display = '';
+  runTicketQueueLoop();
+}
+
+// ───────────────────────────────────────────────
+// Live ticket queue (spec p.5). Runs the whole time the room is open:
+// the in-progress ticket closes, then a new one types in at the bottom
+// and the oldest scrolls off the top — no sound, it updates too often.
+// ───────────────────────────────────────────────
+async function typeIntoElement(el, text, speed = 14) {
+  for (let i = 0; i < text.length; i++) {
+    el.textContent += text[i];
+    await sleep(speed);
+  }
+  return el;
+}
+
+const TICKET_POOL = [
+  'Email sync error',
+  'Account locked out',
+  'Software install request',
+  'Slow laptop performance',
+  'Wi-Fi not connecting',
+  'Shared drive access',
+];
+
+const tqList = document.getElementById('tq-list');
+const tqClosedCountEl = document.getElementById('tq-closed-count');
+const TQ_MAX_VISIBLE = 3;
+let tqClosedCount = 2;
+let tqNextTicketNumber = 1045;
+let tqPoolIndex = 0;
+
+function closeTicketRow(statusEl) {
+  statusEl.textContent = 'CLOSED';
+  statusEl.classList.remove('tq-progress');
+  statusEl.classList.add('tq-closed');
+  tqClosedCount++;
+  tqClosedCountEl.textContent = tqClosedCount;
+}
+
+async function addTicketRow() {
+  const desc = TICKET_POOL[tqPoolIndex % TICKET_POOL.length];
+  tqPoolIndex++;
+  const number = tqNextTicketNumber++;
+
+  const row = document.createElement('div');
+  row.className = 'tq-row tq-row-enter';
+  const numEl = document.createElement('span');
+  numEl.textContent = `#${number}`;
+  const descEl = document.createElement('span');
+  descEl.className = 'tq-desc';
+  const statusEl = document.createElement('span');
+  statusEl.className = 'tq-status tq-progress';
+  statusEl.textContent = 'IN PROGRESS';
+  row.append(numEl, descEl, statusEl);
+  tqList.appendChild(row);
+
+  // Oldest row scrolls off the top once we're over the visible limit —
+  // removed outright rather than height-animated, so there's no window
+  // where an entering and an exiting row can occupy the same slot.
+  const rows = tqList.querySelectorAll('.tq-row');
+  if (rows.length > TQ_MAX_VISIBLE) {
+    rows[0].remove();
+  }
+
+  // Double rAF so the "enter" (faded/offset) state paints before we
+  // transition out of it — opacity/transform only, so this never
+  // affects layout or other rows' positions.
+  requestAnimationFrame(() => requestAnimationFrame(() => row.classList.remove('tq-row-enter')));
+
+  await sleep(420);
+  await typeIntoElement(descEl, desc, 16);
+  return statusEl;
+}
+
+let ticketQueueLoopStarted = false;
+async function runTicketQueueLoop() {
+  if (ticketQueueLoopStarted) return;
+  ticketQueueLoopStarted = true;
+
+  const initialStatus = document.getElementById('tq-initial-status');
+  await sleep(4000 + Math.random() * 2000);
+  closeTicketRow(initialStatus);
+
+  while (true) {
+    await sleep(3000 + Math.random() * 2000);
+    const statusEl = await addTicketRow();
+    await sleep(4000 + Math.random() * 3000);
+    closeTicketRow(statusEl);
+  }
+}
+
+const statusUptimeEl = document.getElementById('status-uptime');
+setInterval(() => {
+  statusUptimeEl.textContent = new Date().toLocaleString('en-US', {
+    hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
+  });
+}, 1000);
+
+const statusMusicBtn = document.getElementById('status-music-btn');
+const roomAudio = document.getElementById('mySong');
+let statusMuted = false;
+statusMusicBtn.addEventListener('click', () => {
+  statusMuted = !statusMuted;
+  roomAudio.volume = statusMuted ? 0 : 0.3;
+  statusMusicBtn.classList.toggle('muted', statusMuted);
+});
+
+function openDoor() {
+  if (doorOpened) return;
+  doorOpened = true;
+  sound.accessChime();
+  loginScreen.classList.remove('visible');
+  showRoomCorners();
+}
+
+document.getElementById('login-enter-btn').addEventListener('click', openDoor);
+
+document.getElementById('login-forgot-link').addEventListener('click', async (e) => {
+  e.preventDefault();
+  if (forgotPasswordClicked) return;
+  forgotPasswordClicked = true;
+
+  ticketCard.classList.add('visible');
+  await typeInto(ticketLines, 'Issue:   Guest locked out of ReeOS', 10, sound.keyClick);
+  await sleep(150);
+  await typeInto(ticketLines, 'Checked: account status, password policy', 10, sound.keyClick);
+  await sleep(150);
+  await typeInto(ticketLines, 'Fix:     password reset, access granted', 10, sound.keyClick);
+  await sleep(150);
+  const statusLine = await typeInto(ticketLines, 'Status:  ', 10, sound.keyClick);
+  const statusValue = document.createElement('span');
+  statusValue.textContent = 'Closed by Ree in 4 seconds';
+  statusValue.style.color = '#39FF14';
+  statusLine.appendChild(statusValue);
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  statusLine.appendChild(cursor);
+
+  await sleep(500);
+  openDoor();
+});
 
 
 const loader = new GLTFLoader(loadingManager)
@@ -171,7 +405,6 @@ loader.load(url, (gltf) => {
     object.position.z = -1
     console.log('loader working fine')
     finishLoading();
-    finishLoadingPercent()
 
     // macOS dark canvas texture for back wall
     const wc = document.createElement('canvas');
@@ -340,10 +573,8 @@ loader.load(url, (gltf) => {
 
 },(progress)=>{
 if (progress.lengthComputable) {
-      
       const percent = Math.round((progress.loaded / progress.total) * 100);
     console.log(`Loading: ${percent}%`);
-      updateProgress(percent);
     }
 }, undefined, (error) => {
     console.error('Error loading GLB', error)

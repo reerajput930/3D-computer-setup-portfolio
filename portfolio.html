@@ -129,6 +129,36 @@
 
     .divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 22px 0; }
 
+    /* Small inline status tags, used across Home/Skills/Projects/Experience */
+    .tag-new, .tag-moved, .tag-live, .tag-valid {
+      display: inline-block;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-left: 6px; vertical-align: middle;
+    }
+    .tag-new   { background: rgba(50,200,50,0.15);  color: #4cd964; }
+    .tag-moved { background: rgba(255,180,50,0.15); color: #ffb627; }
+    .tag-valid { background: rgba(50,200,50,0.15);  color: #4cd964; }
+    .tag-live {
+      background: transparent; color: #4cd964; margin-left: 8px; padding: 2px 0;
+    }
+    .tag-live::before {
+      content: ''; display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: #4cd964; margin-right: 5px;
+      box-shadow: 0 0 5px #4cd964;
+    }
+    .needs-you-note {
+      background: rgba(255,180,50,0.08);
+      border: 1px solid rgba(255,180,50,0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+    .needs-you-note strong { color: #ffb627; }
+
     /* ── Home two-column layout ── */
     .home-layout {
       display: flex;
@@ -314,6 +344,21 @@
     }
     .mac-btn:hover { background: #0070d8; }
 
+    /* Tickets */
+    .ticket-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
+      font-family: 'SF Mono', 'Courier New', monospace;
+    }
+    .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .ticket-id { color: #fff; font-size: 15px; font-weight: 700; }
+    .ticket-status-closed { color: #4cd964; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+    .ticket-row { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.6; }
+    .ticket-row strong { color: rgba(255,255,255,0.35); display: inline-block; width: 72px; vertical-align: top; }
+
     /* ── Responsive ── */
 
     @media (max-width: 768px) {
@@ -465,6 +510,9 @@
         <a href="#" class="active" onclick="showSection('home',this);return false;">
           <span class="nav-icon">⌂</span> Home
         </a>
+        <a href="#" onclick="showSection('tickets',this);return false;">
+          <span class="nav-icon">◫</span> Tickets<span class="tag-new">NEW</span>
+        </a>
 <a href="#" onclick="showSection('skills',this);return false;">
           <span class="nav-icon">◎</span> Skills & Certifications
         </a>
@@ -491,7 +539,7 @@
 
         <!-- Title above columns -->
         <h1>Welcome human :)</h1>
-        <p style="font-size:16px;color:rgba(255,255,255,0.4);margin-top:4px;font-weight:400;">I'm Riya</p>
+        <p style="font-size:16px;color:rgba(255,255,255,0.4);margin-top:4px;font-weight:400;">I'm Riya · IT Support · Cybersecurity · Developer<span class="tag-new">NEW</span></p>
         <hr class="divider">
 
         <!-- Shape-outside float layout -->
@@ -499,17 +547,19 @@
 
           <!-- Left: text -->
           <div class="home-text">
-            <p>Hi, human. Lovely connecting with you. Let me introduce myself. Let's go a little deeper and disconnect myself from job title and skills I acquire. Small fun fact — I'm a human who loves to connect with another human and genuinely interested in understanding and knowing about the past and the future of that personality. Passionate about understanding the psyche, the motto, and the meaning behind human action and behavior.</p>
+            <h3 style="margin-top:0;">About me<span class="tag-moved">MOVED UP</span></h3>
+            <p>I work in IT support, with a cybersecurity background, and I also build things. At Genieall I closed 220 Tier-1 tickets, set up 90 user accounts, and wrote 25 knowledge base articles. I hold CompTIA Network+ and ISC2 CC. I've also spent almost two years in customer service, so I stay calm with people who are stuck and stressed.</p>
+            <p>I code too. I've shipped 85+ tickets at a product startup, built websites for clients across Canada, Dubai, and India, led developer communities under Google and Microsoft, and somehow ended up in front of a camera teaching tech to 3,000+ people through Coding with Ree'.</p>
             <hr class="divider">
-            <h3>About me</h3>
-            <p>I'm a Full-Stack Developer with a Cybersecurity background. I've shipped 85+ tickets at a product startup, built websites for clients across Canada, Dubai, and India, led developer communities under Google and Microsoft, and somehow also ended up in front of a camera teaching tech to 3,000+ people on YouTube and Instagram through Coding with Ree'.</p>
-            <p>Right now I'm working as a <strong>Full Stack .NET Software Developer at VR Tech Info Inc.,</strong> contributing to Rogers as a client — reducing API integration errors, improving sprint completion rates, and cutting deployment cycle time through CI/CD pipelines on Azure DevOps. It's fast-paced, real-world, and exactly the kind of work that keeps me sharp.</p>
+            <h3>Hi, human</h3>
+            <p>Hi, human. Lovely connecting with you. Let me introduce myself. Let's go a little deeper and disconnect myself from job title and skills I acquire. Small fun fact — I'm a human who loves to connect with another human and genuinely interested in understanding and knowing about the past and the future of that personality. Passionate about understanding the psyche, the motto, and the meaning behind human action and behavior.</p>
             <p>But strip all of that away — and I'm just someone who genuinely loves people. I ask too many questions. I want to know where you started, what shaped you, and where you're trying to go. That curiosity isn't separate from my work — it's the reason I build things that actually make sense to the people using them.</p>
-            <p>Outside the screen: morning runs, breathwork, basketball, tennis, table tennis. I move to think clearly.</p>
+            <p>Outside the screen: morning runs, breathwork, basketball, tennis, table tennis. In my free time I get creative and make tech videos as Coding with Ree'.</p>
             <hr class="divider">
             <h3>Education</h3>
             <p><strong style="color:#fff;">Sault College, Brampton, Ontario</strong> — 2024–2025<br>Post Graduate Diploma in Cybersecurity (Co-op)</p>
             <p><strong style="color:#fff;">Guru Nanak Dev University, Punjab, India</strong> — 2020–2023<br>Bachelor of Science in Computer Science</p>
+            <p><strong style="color:#4cd964;">CompTIA Network+ · ISC2 Certified in Cybersecurity</strong><span class="tag-new">NEW</span></p>
           </div>
 
           <!-- Right: glitch photo -->
@@ -536,29 +586,84 @@
 
       </div>
 
+      <!-- TICKETS -->
+      <div class="section" id="sec-tickets">
+        <h2>Tickets</h2>
+        <hr class="divider">
+        <p>Real problems I've closed, in the same shape as a help desk ticket. No company or user names.</p>
+
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <span class="ticket-id">Ticket #1042</span>
+            <span class="ticket-status-closed">CLOSED</span>
+          </div>
+          <div class="ticket-row"><strong>Issue</strong>Guest locked out of their account after repeated failed logins</div>
+          <div class="ticket-row"><strong>Checked</strong>Account status, password policy, recent login attempts</div>
+          <div class="ticket-row"><strong>Fix</strong>Reset password, confirmed identity, restored access</div>
+          <div class="ticket-row"><strong>Time</strong>4 minutes</div>
+        </div>
+
+        <div class="needs-you-note">
+          <strong>Placeholder.</strong> The ticket above is an example. The real queue needs 5 or 6 problems actually solved at Genieall or while tutoring — for each: the issue, what was checked, how it was fixed, and how long it took.
+        </div>
+      </div>
+
       <!-- EXPERIENCE -->
       <div class="section" id="sec-experience">
         <h2>Experience</h2>
         <hr class="divider">
+
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-top:0;margin-bottom:16px;">Group 1 · IT &amp; Support</h3>
+
         <div class="exp-block">
           <div class="exp-header">
-            <span class="exp-company">VR Tech Info Inc. <span style="color:rgba(255,255,255,0.3);font-size:14px;font-weight:400;">· Client: Rogers</span></span>
-            <span class="exp-date">Jan 2026 – Present</span>
+            <span class="exp-company">Genieall Corporation</span>
+            <span class="exp-date">May 2025 – Aug 2025 · Toronto, Hybrid</span>
           </div>
-          <div class="exp-role">Full Stack .NET Software Developer</div>
+          <div class="exp-role">IT Help Desk Intern</div>
           <ul>
-            <li>Contributed as a Full-Stack .NET and Python Developer at Rogers, delivering backend APIs, cloud deployments, and Agile sprint features in a remote contract role.</li>
-            <li>Reduced API integration errors by 20% by building and maintaining .NET Core RESTful APIs and JSON data contracts at Rogers.</li>
-            <li>Improved sprint completion rate by 15% by delivering full-stack .NET and Python features in Agile/Scrum sprints remotely.</li>
-            <li>Decreased deployment cycle time by 25% by setting up CI/CD pipelines on Azure DevOps with zero downtime delivery.</li>
-            <li>Strengthened app security and data consistency using React, .NET Core APIs, and Entity Framework on Azure.</li>
+            <li>Resolved 220 Tier-1 hardware, software, and account tickets, with 80% fixed on first contact.</li>
+            <li>Set up 90 user accounts and managed access in Microsoft 365 and Active Directory, cutting access delays by 35%.</li>
+            <li>Wrote 25 knowledge base articles on repeat issues, cutting repeat incidents by 15%.</li>
+            <li>Wrote small Python and Bash scripts to speed up account setup and reporting.</li>
+            <li>Worked with senior IT staff on harder incidents and followed them through to the fix.</li>
           </ul>
         </div>
         <hr class="divider">
         <div class="exp-block">
           <div class="exp-header">
+            <span class="exp-company">Canaray</span>
+            <span class="exp-date">Aug 2026 – Present · Toronto, Full-time</span>
+          </div>
+          <div class="exp-role">Customer Service Representative <span style="color:rgba(255,255,255,0.3);font-size:12px;font-weight:400;">(use the title on the offer letter)</span></div>
+          <ul>
+            <li>Handle calls all day from patients and dental offices, and solve their problems on the spot.</li>
+            <li>Sort out booking, records, and follow-up issues so cases don't get stuck.</li>
+            <li>Stay calm and clear with callers who are stressed or confused.</li>
+          </ul>
+          <div class="needs-you-note"><strong>To add:</strong> calls per day, and the tech problems solved (login, scans, files).</div>
+        </div>
+        <hr class="divider">
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">RONA+ and No Frills</span>
+            <span class="exp-date">Jan 2025 – Jul 2026 · Part-time</span>
+          </div>
+          <div class="exp-role">Customer Service Representative</div>
+          <ul>
+            <li>Served 60+ customers a day at RONA+ and handled 100+ transactions per shift at No Frills.</li>
+            <li>Solved returns, price checks, and order problems on the spot during peak hours.</li>
+            <li>Filled 10+ online orders a day, accurate and on time.</li>
+          </ul>
+        </div>
+
+        <hr class="divider">
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Group 2 · Development</h3>
+
+        <div class="exp-block">
+          <div class="exp-header">
             <span class="exp-company">Independent</span>
-            <span class="exp-date">2024 – 2025</span>
+            <span class="exp-date">Jan 2024 – Aug 2025</span>
           </div>
           <div class="exp-role">Freelance Full-Stack Developer</div>
           <ul>
@@ -571,27 +676,13 @@
         <div class="exp-block">
           <div class="exp-header">
             <span class="exp-company">Reverr</span>
-            <span class="exp-date">2023 – 2024</span>
+            <span class="exp-date">Jun 2023 – Sep 2023</span>
           </div>
-          <div class="exp-role">Software Developer</div>
+          <div class="exp-role">Frontend Developer Intern</div>
           <ul>
-            <li>Developed 12 React.js features reducing UI defects by 25% via TypeScript typing.</li>
-            <li>Integrated 8 REST API endpoints improving data consistency by 20%.</li>
-            <li>Delivered 85 tickets end-to-end improving sprint throughput by 15%.</li>
-            <li>Administered 120 GitHub PRs reducing merge conflicts by 30%.</li>
-          </ul>
-        </div>
-        <hr class="divider">
-        <div class="exp-block">
-          <div class="exp-header">
-            <span class="exp-company">Genieall Corporation</span>
-            <span class="exp-date">May 2025 – Aug 2025</span>
-          </div>
-          <div class="exp-role">IT Help Desk Intern</div>
-          <ul>
-            <li>Resolved 220 Tier-1 tickets improving first-contact resolution to 80%.</li>
-            <li>Provisioned 90 user accounts reducing access delays by 35%.</li>
-            <li>Authored 25 knowledge base articles cutting repeat incidents by 15%.</li>
+            <li>Shipped 15+ features in React.js and TypeScript.</li>
+            <li>Delivered 85+ Jira tickets across Agile sprints.</li>
+            <li>Connected the frontend to REST APIs with the backend team.</li>
           </ul>
         </div>
         <hr class="divider">
@@ -607,11 +698,98 @@
             <li>Optimized client-side interactions decreasing page response time by 20%.</li>
           </ul>
         </div>
+
+        <div class="needs-you-note">
+          <strong>On hold: VR Tech Info Inc.</strong> (Full Stack .NET Software Developer, client Rogers). It isn't on LinkedIn, so it's left out of this page. Keep it only if it can be backed with a contract, pay records, and a reference.
+        </div>
       </div>
 
       <!-- PROJECTS -->
       <div class="section" id="sec-projects">
         <h2>Projects</h2>
+        <hr class="divider">
+
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-top:0;margin-bottom:16px;">Group 1 · IT &amp; Security Labs</h3>
+        <div class="needs-you-note">
+          <strong>Empty until the work is done.</strong> A card goes up only when a lab is finished — labs from the Sault diploma first, then new ones as they're built.
+        </div>
+
+        <hr class="divider">
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Group 2 · Development</h3>
+
+        <!-- 3D Portfolio -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">3D Computer Setup Portfolio<span class="tag-live">LIVE</span></div>
+            <div class="project-type">// Interactive Web Experience</div>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">An immersive 3D portfolio built with Three.js featuring a fully modelled computer room setup floating in space. Includes orbit controls, auto-rotation, a terminal loading screen, a live ticket queue and network map, music toggle, and this macOS-style portfolio embedded on the back wall.</p>
+            <div class="project-tags">
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">JavaScript</span>
+              <span class="project-tag">Vite</span>
+              <span class="project-tag">GLTF / Draco</span>
+              <span class="project-tag">HTML / CSS</span>
+              <span class="project-tag">Canvas API</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/3D-computer-setup-portfolio" target="_blank">GitHub →</a>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Zero Dashboard -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">Zero Dashboard<span class="tag-live">LIVE</span></div>
+            <div class="project-type">// Analytics · MERN Stack</div>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">A full-stack analytics dashboard with secure JWT-based authentication, real-time data visualisation through interactive charts, and a responsive UI. Architected with client-server separation, global state via Context API, and data persistence through MongoDB. Deployed live on Netlify.</p>
+            <div class="project-tags">
+              <span class="project-tag">React.js</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">Express.js</span>
+              <span class="project-tag">MongoDB</span>
+              <span class="project-tag">Tailwind CSS</span>
+              <span class="project-tag">JWT Auth</span>
+              <span class="project-tag">Context API</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/zero-dashboard" target="_blank">GitHub →</a>
+              <a class="project-link" href="https://zero-dashboard.netlify.app" target="_blank">Live Demo →</a>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Growth App -->
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-name">Growth App<span class="tag-live">LIVE</span></div>
+            <div class="project-type">// Full-Stack MERN</div>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">A collaborative progress tracker with a Jira-style task board, built for two individuals to check their growth reports and achieve goals together. Includes a ToDo manager too.</p>
+            <div class="project-tags">
+              <span class="project-tag">React.js</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">Express.js</span>
+              <span class="project-tag">MongoDB Atlas</span>
+              <span class="project-tag">Tailwind CSS</span>
+              <span class="project-tag">Context API</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
+              <a class="project-link" href="https://github.com/reerajput930/growth-app" target="_blank">GitHub →</a>
+              <a class="project-link" href="https://growth-application.netlify.app" target="_blank">Live Demo →</a>
+            </div>
+          </div>
+        </div>
+
         <hr class="divider">
 
         <!-- Face Recognition -->
@@ -634,81 +812,6 @@
           </div>
         </div>
 
-        <hr class="divider">
-
-        <!-- Zero Dashboard -->
-        <div class="project-card">
-          <div class="project-header">
-            <div class="project-name">Zero Dashboard</div>
-            <div class="project-type">// Analytics · MERN Stack</div>
-          </div>
-          <div class="project-body">
-            <p class="project-desc">A full-stack analytics dashboard featuring real-time data visualisation through interactive charts, secure JWT-based authentication, and a responsive UI. Architected with client-server separation, global state via Context API, and data persistence through MongoDB. Deployed live on Netlify.</p>
-            <div class="project-tags">
-              <span class="project-tag">React.js</span>
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">Express.js</span>
-              <span class="project-tag">MongoDB</span>
-              <span class="project-tag">Tailwind CSS</span>
-              <span class="project-tag">JWT Auth</span>
-              <span class="project-tag">Context API</span>
-            </div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
-              <a class="project-link" href="https://github.com/reerajput930/zero-dashboard" target="_blank">GitHub →</a>
-              <a class="project-link" href="https://zero-dashboard.netlify.app" target="_blank">Live Demo →</a>
-            </div>
-          </div>
-        </div>
-
-        <hr class="divider">
-
-        <!-- Growth App -->
-        <div class="project-card">
-          <div class="project-header">
-            <div class="project-name">Growth App</div>
-            <div class="project-type">// Full-Stack MERN</div>
-          </div>
-          <div class="project-body">
-            <p class="project-desc">A collaborative progress tracker built for two individuals to check their growth reports and achieve goals together. Includes a ToDo manager and Jira-style dashboard for task management.</p>
-            <div class="project-tags">
-              <span class="project-tag">React.js</span>
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">Express.js</span>
-              <span class="project-tag">MongoDB Atlas</span>
-              <span class="project-tag">Tailwind CSS</span>
-              <span class="project-tag">Context API</span>
-            </div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
-              <a class="project-link" href="https://github.com/reerajput930/growth-app" target="_blank">GitHub →</a>
-              <a class="project-link" href="https://growth-application.netlify.app" target="_blank">Live Demo →</a>
-            </div>
-          </div>
-        </div>
-
-        <hr class="divider">
-
-        <!-- 3D Portfolio -->
-        <div class="project-card">
-          <div class="project-header">
-            <div class="project-name">3D Computer Setup Portfolio</div>
-            <div class="project-type">// Interactive Web Experience</div>
-          </div>
-          <div class="project-body">
-            <p class="project-desc">An immersive 3D portfolio built with Three.js featuring a fully modelled computer room setup floating in space. Includes orbit controls, auto-rotation, a terminal loading screen, music toggle, and this macOS-style portfolio embedded on the back wall.</p>
-            <div class="project-tags">
-              <span class="project-tag">Three.js</span>
-              <span class="project-tag">JavaScript</span>
-              <span class="project-tag">Vite</span>
-              <span class="project-tag">GLTF / Draco</span>
-              <span class="project-tag">HTML / CSS</span>
-              <span class="project-tag">Canvas API</span>
-            </div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;">
-              <a class="project-link" href="https://github.com/reerajput930" target="_blank">GitHub →</a>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- SKILLS -->
@@ -719,15 +822,34 @@
         <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Skills</h3>
 
         <div class="skills-cat">
-          <h4>DevOps &amp; Cloud</h4>
+          <h4>1 · IT Support<span class="tag-new">NEW GROUP</span></h4>
           <div class="skill-tags">
-            <span class="skill-tag">CI/CD Pipelines</span><span class="skill-tag">GitHub Actions</span>
-            <span class="skill-tag">Azure DevOps</span><span class="skill-tag">Docker</span>
-            <span class="skill-tag">Linux Admin</span><span class="skill-tag">Cloud Security</span>
+            <span class="skill-tag">Tier 1 troubleshooting</span><span class="skill-tag">Ticketing systems</span>
+            <span class="skill-tag">Active Directory</span><span class="skill-tag">Microsoft 365</span>
+            <span class="skill-tag">User accounts and access</span><span class="skill-tag">Windows</span>
+            <span class="skill-tag">Hardware support</span><span class="skill-tag">Knowledge base writing</span>
           </div>
         </div>
         <div class="skills-cat">
-          <h4>Development</h4>
+          <h4>2 · Security &amp; Networking</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">Cybersecurity</span><span class="skill-tag">Network Security</span>
+            <span class="skill-tag">IAM</span><span class="skill-tag">Wireshark</span>
+            <span class="skill-tag">Nmap</span><span class="skill-tag">Cisco Packet Tracer</span>
+            <span class="skill-tag">Linux</span>
+            <span class="skill-tag" style="border-style:dashed;opacity:0.7;">Incident Response ?</span>
+          </div>
+        </div>
+        <div class="skills-cat">
+          <h4>3 · Tools &amp; Workflow</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">GitHub</span><span class="skill-tag">Jira</span>
+            <span class="skill-tag">Postman</span><span class="skill-tag">Agile / SDLC</span>
+            <span class="skill-tag">Trello</span>
+          </div>
+        </div>
+        <div class="skills-cat">
+          <h4>4 · Development</h4>
           <div class="skill-tags">
             <span class="skill-tag">React.js</span><span class="skill-tag">JavaScript ES6+</span>
             <span class="skill-tag">TypeScript</span><span class="skill-tag">REST APIs</span>
@@ -735,38 +857,45 @@
           </div>
         </div>
         <div class="skills-cat">
-          <h4>Security &amp; IT</h4>
+          <h4>5 · DevOps &amp; Cloud</h4>
           <div class="skill-tags">
-            <span class="skill-tag">Cybersecurity</span><span class="skill-tag">Network Security</span>
-            <span class="skill-tag">IAM</span><span class="skill-tag">Active Directory</span>
-            <span class="skill-tag">Microsoft 365</span><span class="skill-tag">Incident Response</span>
-          </div>
-        </div>
-        <div class="skills-cat">
-          <h4>Tools &amp; Workflow</h4>
-          <div class="skill-tags">
-            <span class="skill-tag">GitHub</span><span class="skill-tag">Jira</span>
-            <span class="skill-tag">Postman</span><span class="skill-tag">Agile / SDLC</span>
-            <span class="skill-tag">Trello</span>
+            <span class="skill-tag">CI/CD Pipelines</span><span class="skill-tag">GitHub Actions</span>
+            <span class="skill-tag">Linux Admin</span>
+            <span class="skill-tag" style="border-style:dashed;opacity:0.7;">Azure DevOps ?</span>
+            <span class="skill-tag" style="border-style:dashed;opacity:0.7;">Docker ?</span>
+            <span class="skill-tag" style="border-style:dashed;opacity:0.7;">Cloud Security ?</span>
           </div>
         </div>
 
         <hr class="divider">
-        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Certifications</h3>
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Certifications · IT &amp; Security</h3>
 
         <div class="cert-card">
-          <div class="cert-icon" style="background:rgba(230,80,20,0.15);color:#ff6b35;">FCC</div>
+          <div class="cert-icon" style="background:rgba(220,50,50,0.15);color:#ff6b6b;">C+</div>
           <div class="cert-info">
-            <div class="cert-name">Frontend Development Libraries V8</div>
-            <div class="cert-issuer">freeCodeCamp</div>
-            <div class="cert-date">Issued Mar 2026 · Credential ID: riyariya-fedl</div>
+            <div class="cert-name">CompTIA Network+<span class="tag-valid">VALID UNTIL DEC 2027</span></div>
+            <div class="cert-issuer">CompTIA Tech Career Academy</div>
+            <div class="cert-date">Issued Dec 2024</div>
             <div class="cert-tags">
-              <span class="project-tag">React</span><span class="project-tag">Redux</span>
-              <span class="project-tag">Bootstrap</span><span class="project-tag">jQuery</span>
-              <span class="project-tag">JavaScript</span><span class="project-tag">Web Development</span>
+              <span class="project-tag">Networking</span><span class="project-tag">CompTIA</span>
             </div>
           </div>
         </div>
+
+        <div class="cert-card">
+          <div class="cert-icon" style="background:rgba(39,166,80,0.15);color:#4cd964;">ISC2</div>
+          <div class="cert-info">
+            <div class="cert-name">Certified in Cybersecurity (CC)<span class="tag-valid">VALID UNTIL SEP 2027</span></div>
+            <div class="cert-issuer">ISC2</div>
+            <div class="cert-date">Issued Sep 2024</div>
+            <div class="cert-tags">
+              <span class="project-tag">Cybersecurity</span><span class="project-tag">ISC2</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Certifications · Other learning</h3>
 
         <div class="cert-card">
           <div class="cert-icon" style="background:rgba(10,132,255,0.15);color:#4db8ff;">MS</div>
@@ -786,7 +915,6 @@
           <div class="cert-info">
             <div class="cert-name">Machine Learning</div>
             <div class="cert-issuer">Udemy</div>
-            <div class="cert-date">Credential ID: 0004</div>
             <div class="cert-tags">
               <span class="project-tag">ML Algorithms</span><span class="project-tag">Data Science</span>
               <span class="project-tag">Predictive Modeling</span>
@@ -795,25 +923,15 @@
         </div>
 
         <div class="cert-card">
-          <div class="cert-icon" style="background:rgba(220,50,50,0.15);color:#ff6b6b;">C+</div>
+          <div class="cert-icon" style="background:rgba(230,80,20,0.15);color:#ff6b35;">FCC</div>
           <div class="cert-info">
-            <div class="cert-name">CompTIA Network+</div>
-            <div class="cert-issuer">CompTIA Tech Career Academy</div>
-            <div class="cert-date">Issued Dec 2024 · Expires Dec 2027</div>
+            <div class="cert-name">Frontend Development Libraries V8</div>
+            <div class="cert-issuer">freeCodeCamp</div>
+            <div class="cert-date">Issued Mar 2026 · Credential ID: riyariya-fedl</div>
             <div class="cert-tags">
-              <span class="project-tag">Networking</span><span class="project-tag">CompTIA</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="cert-card">
-          <div class="cert-icon" style="background:rgba(39,166,80,0.15);color:#4cd964;">ISC2</div>
-          <div class="cert-info">
-            <div class="cert-name">Certified in Cybersecurity (CC)</div>
-            <div class="cert-issuer">ISC2</div>
-            <div class="cert-date">Issued Sep 2024 · Expires Sep 2027</div>
-            <div class="cert-tags">
-              <span class="project-tag">Cybersecurity</span><span class="project-tag">ISC2</span>
+              <span class="project-tag">React</span><span class="project-tag">Redux</span>
+              <span class="project-tag">Bootstrap</span><span class="project-tag">jQuery</span>
+              <span class="project-tag">JavaScript</span><span class="project-tag">Web Development</span>
             </div>
           </div>
         </div>
@@ -853,6 +971,34 @@
 
         <div class="exp-block">
           <div class="exp-header">
+            <span class="exp-company">Sault College<span class="tag-new">NEW</span></span>
+            <span class="exp-date">Jan 2025 – Apr 2025 · 4 mos</span>
+          </div>
+          <div class="exp-role">Information Technology Tutor</div>
+          <ul>
+            <li>Helped 20+ students debug Python and Bash by walking through their code line by line.</li>
+            <li>Fixed 30+ network and system issues with students using Wireshark, Cisco Packet Tracer, Nmap, and virtual machines.</li>
+            <li>Explained Linux, networking, and cybersecurity topics in simple terms for learners at different levels.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-company">My Personal Mentor<span class="tag-new">NEW</span></span>
+            <span class="exp-date">Jul 2026 · Toronto, On-site</span>
+          </div>
+          <div class="exp-role">Event Volunteer</div>
+          <ul>
+            <li>Ran the MPM Question Wall, where attendees posted their career questions, and collected 100+ by the end of the day.</li>
+            <li>Started conversations with attendees who were unsure about joining in, and got them involved.</li>
+            <li>Worked with the volunteer team to guide hundreds of job seekers and keep the event running smoothly.</li>
+          </ul>
+        </div>
+        <hr class="divider">
+
+        <div class="exp-block">
+          <div class="exp-header">
             <span class="exp-company">Microsoft</span>
             <span class="exp-date">Apr 2021 – Dec 2023 · 2 yrs 9 mos</span>
           </div>
@@ -879,16 +1025,16 @@
         </div>
 
         <hr class="divider">
-        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Creative Side</h3>
+        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Creative Side · What I do for fun</h3>
 
         <div class="resume-card">
           <div class="r-icon">▶️</div>
           <div>
-            <strong>Coding with Ree'</strong>
-            <a href="https://www.youtube.com/@codewithree930" target="_blank">@codewithree930 on YouTube →</a>
+            <strong>Coding with Ree'</strong><br>
+            <a href="https://www.youtube.com/@codewithree930" target="_blank">@codewithree930 on YouTube →</a><br>
+            <span style="color:#ffb627;font-size:13px;">Instagram: add your handle</span>
           </div>
         </div>
-        <p style="color:rgba(255,255,255,0.35);font-style:italic;margin-top:12px;">More content coming soon.</p>
       </div>
 
 <!-- CONTACT -->

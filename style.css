@@ -69,6 +69,154 @@
   text-shadow: 0 0 8px #ff0044;
 }
 
+.ok-badge {
+  color: #39FF14;
+}
+
+.fail-badge {
+  color: #FF4D4D;
+}
+
+/* ── Login screen ── */
+#login-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+#login-screen.visible {
+  display: flex;
+}
+
+.login-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.login-card {
+  background: rgba(10, 12, 10, 0.82);
+  border-radius: 6px;
+  padding: 20px 24px;
+  width: 300px;
+  box-sizing: border-box;
+}
+
+.user-card {
+  border: 1px solid #B388FF;
+  box-shadow: 0 0 16px rgba(179, 136, 255, 0.25);
+}
+
+.login-box {
+  border: 1px solid #39FF14;
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.2);
+}
+
+.ticket-card {
+  border: 1px solid #39FF14;
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.2);
+  width: 624px;
+  max-width: 90vw;
+  display: none;
+}
+
+.ticket-card.visible {
+  display: block;
+}
+
+.login-card-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.user-card .login-card-label {
+  color: #B388FF;
+}
+
+.login-username {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.login-field {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 6px;
+}
+
+.login-field-label {
+  display: inline-block;
+  width: 64px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.login-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  padding: 9px 10px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+
+.login-enter-btn {
+  display: block;
+  width: 100%;
+  background: #39FF14;
+  border: none;
+  color: #001a00;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 11px 0;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.45);
+}
+
+.login-enter-btn:hover {
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.7);
+}
+
+.login-forgot-link {
+  display: block;
+  margin-top: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: #39FF14;
+  text-decoration: underline;
+}
+
+.login-ticket-lines {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  color: #39FF14;
+  line-height: 22px;
+  white-space: pre;
+}
+
 /* Blinking cursor */
 .cursor {
   display: inline-block;
@@ -82,11 +230,4 @@
 
 @keyframes blink {
   50% { opacity: 0; }
-}
-
-
-#lastline{
- position: fixed;
- bottom: 25px;
- display: flex;
 }

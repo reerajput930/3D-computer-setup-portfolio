@@ -199,6 +199,173 @@
    }
    .c-node:hover .c-label { color: rgba(255,255,255,0.75); }
 
+   /* Online status dot, pinned near the top-right of each node's circle */
+   .c-status-dot {
+     position: absolute;
+     top: 10px;
+     left: calc(50% + 26px);
+     transform: translate(-50%, -50%);
+     width: 9px; height: 9px;
+     border-radius: 50%;
+     background: #39FF14;
+     box-shadow: 0 0 6px #39FF14;
+     border: 1px solid rgba(0,0,0,0.6);
+   }
+   .c-status-dot.c-status-pending {
+     background: #FFB627;
+     box-shadow: 0 0 6px #FFB627;
+   }
+
+   /* Hover tooltip — shows each node's real role */
+   .c-hover-tooltip {
+     position: absolute;
+     display: none;
+     top: 0; left: 0;
+     background: rgba(10,12,10,0.92);
+     border: 1px solid #39FF14;
+     color: rgba(255,255,255,0.9);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 11px;
+     padding: 6px 10px;
+     border-radius: 4px;
+     white-space: nowrap;
+     pointer-events: none;
+     z-index: 6;
+     transform: translate(-50%, -135%);
+   }
+   .c-hover-tooltip.visible { display: block; }
+   .c-hover-tooltip.pending { border-color: #FFB627; color: #FFB627; }
+
+   /* REE hub node — centre of the network map, stays put (no float) */
+   .c-circle-ree {
+     width: 72px; height: 72px;
+     border-color: #B388FF;
+     background: rgba(179,136,255,0.1);
+     box-shadow: 0 0 14px rgba(179,136,255,0.4);
+   }
+   .c-ree-label {
+     font-family: 'Orbitron', sans-serif;
+     font-size: 10px;
+     letter-spacing: 1px;
+     color: #B388FF;
+     text-align: center;
+     line-height: 1.3;
+   }
+   #c-node-ree { animation: none !important; z-index: 3; }
+
+   /* Tech Info — on hold, dotted amber node instead of a solid online one */
+   .c-node-pending .c-circle {
+     border-style: dashed;
+     border-color: #FFB627;
+   }
+   .c-node-pending .c-label {
+     color: rgba(255,182,39,0.6);
+   }
+   .c-node-pending:hover .c-label { color: #FFB627; }
+
+   /* Status bar — top left */
+   #status-bar {
+     display: none;
+     position: fixed;
+     top: 2.5rem;
+     left: 2.5rem;
+     z-index: 9;
+     width: 300px;
+     background: rgba(10,12,10,0.78);
+     border: 1px solid #39FF14;
+     box-shadow: 0 0 14px rgba(57,255,20,0.18);
+     border-radius: 6px;
+     padding: 14px 18px;
+     font-family: 'Courier New', Courier, monospace;
+   }
+   #status-bar.visible { display: block; }
+   .status-row {
+     color: rgba(255,255,255,0.75);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 12px;
+     letter-spacing: 0;
+     font-weight: normal;
+     display: flex;
+     justify-content: space-between;
+     margin-top: 6px;
+   }
+   .status-row:first-child { margin-top: 0; }
+   .status-online { color: #39FF14; display: flex; align-items: center; gap: 6px; }
+   .online-dot {
+     width: 7px; height: 7px;
+     border-radius: 50%;
+     background: #39FF14;
+     box-shadow: 0 0 6px #39FF14;
+     display: inline-block;
+   }
+   .status-on { color: #39FF14; }
+   .status-controls { margin-top: 12px; }
+   .status-icon-btn {
+     display: inline-flex;
+     width: 2rem; height: 2rem;
+     align-items: center; justify-content: center;
+     border: 2px solid white;
+     background: white;
+     border-radius: 5px;
+     cursor: pointer;
+   }
+   .status-icon-btn img { height: 1.1rem; }
+   .status-icon-btn.muted { background: rgba(255,255,255,0.3); }
+
+   /* Ticket queue — top right */
+   #ticket-queue-panel {
+     display: none;
+     position: fixed;
+     top: 2.5rem;
+     right: 2.5rem;
+     z-index: 9;
+     width: 360px;
+     max-width: calc(100vw - 4rem);
+     box-sizing: border-box;
+     background: rgba(10,12,10,0.78);
+     border: 1px solid #39FF14;
+     box-shadow: 0 0 14px rgba(57,255,20,0.18);
+     border-radius: 6px;
+     padding: 14px 16px;
+     font-family: 'Courier New', Courier, monospace;
+   }
+   #ticket-queue-panel.visible { display: block; }
+   .tq-title {
+     font-family: 'Orbitron', sans-serif;
+     font-size: 10px;
+     letter-spacing: 2px;
+     color: #39FF14;
+     margin-bottom: 10px;
+   }
+   .tq-list {
+     display: flex;
+     flex-direction: column;
+   }
+   .tq-row {
+     display: grid;
+     grid-template-columns: 44px 1fr auto;
+     gap: 8px;
+     align-items: baseline;
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 11px;
+     font-weight: normal;
+     letter-spacing: 0;
+     color: rgba(255,255,255,0.7);
+     white-space: nowrap;
+     margin-top: 6px;
+     opacity: 1;
+     transform: translateY(0);
+     transition: opacity 0.4s ease, transform 0.4s ease;
+   }
+   .tq-row.tq-row-enter {
+     opacity: 0;
+     transform: translateY(10px);
+   }
+   .tq-desc { overflow: hidden; text-overflow: ellipsis; }
+   .tq-status { font-weight: bold; }
+   .tq-closed { color: #39FF14; }
+   .tq-progress { color: #FFB627; }
+
    /* Portfolio overlay */
    #portfolio-overlay {
      display: none;
@@ -384,6 +551,10 @@
      }
      #c-svg { display: none; }
 
+     /* REE hub node is a desktop hub-map concept — mobile keeps its plain brand grid */
+     #c-node-ree { display: none; }
+     .c-status-dot, .c-hover-tooltip { display: none; }
+
      /* Grid layout for brand nodes */
      .c-node {
        position: relative !important;
@@ -453,27 +624,32 @@
       <span class="title">onboarding.exe</span>
     </div>
     <div class="body">
-      <div id="code-lines">  <div id="detail-riya">
-      <div style="font-family: sans-serif;">Riya,    &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; Released: 2026 </div>
-      <div style="font-family: sans-serif;">Ree,     &nbsp;  &nbsp;&nbsp; &nbsp;&nbsp; HHBIOS (C)2026 Riya Inc.,</div>
-      <br/>
-      
-      <div style="font-family: sans-serif;">HSP S13 2026-2028 Special UC131S</div>
-      <div style="font-family: sans-serif;">HSP Showcase(tm) XX 113</div> 
-      <div style="font-family: sans-serif;">Location detected: Toronto ON</div> 
-      <br/>
-      
-      <div>Initializing neural interface...</div> 
+      <div id="code-lines"></div>
     </div>
-    
-    </div>
-    <div  style="font-family: sans-serif;" id="lastline">
-    <div>Human onboarding.............</div>
-    <div id="progress-text">0%    </div> 
-  
   </div>
-    
+</div>
+
+<div id="login-screen">
+  <div class="login-row">
+    <div class="login-card user-card">
+      <div class="login-card-label">USER</div>
+      <div class="login-username">RIYA (REE)</div>
+      <div class="login-field"><span class="login-field-label">ROLE</span>IT Support · Cybersecurity</div>
+      <div class="login-field"><span class="login-field-label">ALSO</span>Developer · 3D Creator · Content Creator (3K)</div>
+      <div class="login-field"><span class="login-field-label">WHERE</span>Toronto, ON</div>
     </div>
+
+    <div class="login-card login-box">
+      <div class="login-card-label">LOG IN</div>
+      <input type="text" class="login-input" value="Guest (Recruiter)" readonly>
+      <button id="login-enter-btn" class="login-enter-btn">ENTER</button>
+      <a href="#" id="login-forgot-link" class="login-forgot-link">Forgot password?</a>
+    </div>
+  </div>
+
+  <div class="login-card ticket-card" id="login-ticket-card">
+    <div class="login-card-label">TICKET #0001</div>
+    <div id="login-ticket-lines" class="login-ticket-lines"></div>
   </div>
 </div>
 
@@ -500,6 +676,32 @@
       <div>3D INTERACTION ARTIST</div>
       <div>CONTENT CREATOR(3K)</div>
 
+    </div>
+
+    <!-- Status bar — top left -->
+    <div id="status-bar">
+      <div class="status-row">
+        <span>USER: RIYA</span>
+        <span class="status-online"><span class="online-dot"></span>STATUS: ONLINE</span>
+      </div>
+      <div class="status-row">LOCATION: TORONTO, ON</div>
+      <div class="status-row">UPTIME: <span id="status-uptime">00:00:00</span></div>
+      <div class="status-row">FIREWALL: <span class="status-on">ON</span>&nbsp;&nbsp;&nbsp;THREATS BLOCKED: <span id="status-threats">0</span></div>
+      <div class="status-controls">
+        <div id="status-music-btn" class="status-icon-btn" title="Music / mute">
+          <img src="./photo_stocks/music-note-icon-34255.png" alt="music">
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket queue — top right -->
+    <div id="ticket-queue-panel">
+      <div class="tq-title">TICKET QUEUE · <span id="tq-closed-count">2</span> CLOSED TODAY</div>
+      <div class="tq-list" id="tq-list">
+        <div class="tq-row"><span>#1042</span><span class="tq-desc">Password reset</span><span class="tq-status tq-closed">CLOSED</span></div>
+        <div class="tq-row"><span>#1043</span><span class="tq-desc">VPN not connecting</span><span class="tq-status tq-closed">CLOSED</span></div>
+        <div class="tq-row"><span>#1044</span><span class="tq-desc">Printer offline</span><span class="tq-status tq-progress" id="tq-initial-status">IN PROGRESS</span></div>
+      </div>
     </div>
 
 
@@ -581,30 +783,40 @@ setInterval(() => {
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
-  <!-- Constellation logos panel -->
+  <!-- Network map panel -->
   <div id="constellation-panel">
-    <div class="c-title">BRANDS I WORKED WITH</div>
+    <div class="c-title">NETWORK MAP · 5 NODES ONLINE</div>
     <svg id="c-svg"></svg>
+    <div id="c-hover-tooltip" class="c-hover-tooltip"></div>
+
+    <div class="c-node c-node-ree" id="c-node-ree" style="left:50%;top:50%">
+      <div class="c-circle c-circle-ree"><div class="c-ree-label">REE<br>ADMIN</div></div>
+    </div>
 
     <div class="mobile-brands-grid">
-      <div class="c-node" style="left:50%;top:22%" data-id="0">
+      <div class="c-node c-node-pending" style="left:50%;top:22%" data-id="0" data-role="On hold. See open items.">
         <div class="c-circle"><img src="/logos/Tech Info.png" alt="Tech Info"></div>
-        <div class="c-label">Tech Info</div>
+        <span class="c-status-dot c-status-pending"></span>
+        <div class="c-label">Tech Info ?</div>
       </div>
-      <div class="c-node" style="left:18%;top:46%" data-id="1">
+      <div class="c-node" style="left:18%;top:46%" data-id="1" data-role="IT Help Desk Intern">
         <div class="c-circle"><img src="/logos/Genieall.png" alt="Genieall"></div>
+        <span class="c-status-dot"></span>
         <div class="c-label">Genieall</div>
       </div>
-      <div class="c-node" style="left:82%;top:44%" data-id="2">
-        <div class="c-circle"><img src="/logos/youtube.png" alt="YouTube"></div>
-        <div class="c-label">YouTube</div>
-      </div>
-      <div class="c-node" style="left:32%;top:74%" data-id="3">
+      <div class="c-node" style="left:82%;top:44%" data-id="2" data-role="Learn Student Ambassador">
         <div class="c-circle"><img src="/logos/microsoft.png" alt="Microsoft"></div>
+        <span class="c-status-dot"></span>
         <div class="c-label">Microsoft</div>
       </div>
-      <div class="c-node" style="left:70%;top:76%" data-id="4">
+      <div class="c-node" style="left:32%;top:74%" data-id="3" data-role="Coding with Ree', 3K">
+        <div class="c-circle"><img src="/logos/youtube.png" alt="YouTube"></div>
+        <span class="c-status-dot"></span>
+        <div class="c-label">YouTube</div>
+      </div>
+      <div class="c-node" style="left:70%;top:76%" data-id="4" data-role="Developer Student Club Co-Lead">
         <div class="c-circle"><img src="/logos/google.png" alt="Google"></div>
+        <span class="c-status-dot"></span>
         <div class="c-label">Google</div>
       </div>
     </div>
@@ -700,7 +912,8 @@ setInterval(() => {
   </script>
 
   <script>
-    const C_CONNECTIONS = [[0,1],[0,2],[0,3],[0,4],[1,3],[2,4],[3,4],[1,2]];
+    // REE (node 0) is the hub — every line runs from the centre out to a brand node.
+    const C_CONNECTIONS = [[0,1],[0,2],[0,3],[0,4],[0,5]];
     const cPanel = document.getElementById('constellation-panel');
     const cSvg   = document.getElementById('c-svg');
 
@@ -713,7 +926,8 @@ setInterval(() => {
     function cDrawLines() {
       const nodes = cPanel.querySelectorAll('.c-node');
       cSvg.innerHTML = '';
-      C_CONNECTIONS.forEach(([a, b]) => {
+      const now = Date.now() / 1000;
+      C_CONNECTIONS.forEach(([a, b], i) => {
         const pa = cGetCenter(nodes[a]), pb = cGetCenter(nodes[b]);
         const line = document.createElementNS('http://www.w3.org/2000/svg','line');
         line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
@@ -721,11 +935,41 @@ setInterval(() => {
         line.setAttribute('stroke', 'rgba(255,255,255,0.1)');
         line.setAttribute('stroke-width', '1');
         cSvg.appendChild(line);
+
+        // A small dot travelling along the line, like a data packet —
+        // staggered per connection so they don't all pulse in lockstep.
+        const cycleSeconds = 2.6;
+        const t = ((now + i * 0.45) % cycleSeconds) / cycleSeconds;
+        const packet = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        packet.setAttribute('cx', pa.x + (pb.x - pa.x) * t);
+        packet.setAttribute('cy', pa.y + (pb.y - pa.y) * t);
+        packet.setAttribute('r', 2);
+        packet.setAttribute('fill', '#39FF14');
+        packet.setAttribute('opacity', '0.85');
+        cSvg.appendChild(packet);
       });
     }
 
     cDrawLines();
     setInterval(cDrawLines, 50);
+
+    // Hover shows each node's real role, plus a soft blip (spec p.5).
+    const cTooltip = document.getElementById('c-hover-tooltip');
+    cPanel.querySelectorAll('.c-node[data-role]').forEach((node) => {
+      node.addEventListener('mouseenter', () => {
+        const nr = node.getBoundingClientRect();
+        const pr = cPanel.getBoundingClientRect();
+        cTooltip.textContent = node.dataset.role;
+        cTooltip.classList.toggle('pending', node.classList.contains('c-node-pending'));
+        cTooltip.style.left = (nr.left - pr.left + nr.width / 2) + 'px';
+        cTooltip.style.top = (nr.top - pr.top) + 'px';
+        cTooltip.classList.add('visible');
+        if (window.reeosBlip) window.reeosBlip();
+      });
+      node.addEventListener('mouseleave', () => {
+        cTooltip.classList.remove('visible');
+      });
+    });
   </script>
   </body>
 </html>
