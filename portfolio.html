@@ -1025,7 +1025,7 @@
         </div>
 
         <hr class="divider">
-        <h3 style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Creative Side · What I do for fun</h3>
+        <h3 id="creative-side" style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;">Creative Side · What I do for fun</h3>
 
         <div class="resume-card">
           <div class="r-icon">▶️</div>
@@ -1085,6 +1085,23 @@
     document.getElementById('sec-' + name).classList.add('active');
     if (el) el.classList.add('active');
   }
+
+  // Deep link, used by the room's ring light: #creative jumps straight to the
+  // Creative Side block, which lives inside the leadership section.
+  function openFromHash() {
+    const hash = location.hash.replace('#', '');
+    if (!hash) return;
+    const target = hash === 'creative' ? 'leadership' : hash;
+    if (!document.getElementById('sec-' + target)) return;
+    const navLink = document.querySelector(`.sidebar nav a[onclick*="'${target}'"]`);
+    showSection(target, navLink);
+    if (hash === 'creative') {
+      document.getElementById('creative-side')
+        .scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
 
   function closeWindow() {
     const w = document.getElementById('mac-window');

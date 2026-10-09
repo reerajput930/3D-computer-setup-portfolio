@@ -231,3 +231,45 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+/* The video is only ever a texture source for the tablet mesh — it must stay
+   in the document to decode, but is never shown as a DOM element. */
+#tablet-video {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  opacity: 0;
+  pointer-events: none;
+  left: -9999px;
+  top: 0;
+}
+
+#screen-back-btn {
+  position: fixed;
+  display: none;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 12px 28px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  backdrop-filter: blur(4px);
+}
+
+#screen-back-btn.visible {
+  display: block;
+}
+
+#screen-back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#screen-back-btn .back-hint {
+  opacity: 0.45;
+  letter-spacing: 2px;
+}

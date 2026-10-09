@@ -11,7 +11,15 @@
   </head>
   <style>
     * { cursor: none !important; }
-    #music, #click, #portfolio-nav-btn, #portfolio-close,
+
+    /* Zoomed in on a screen: hand the pointer back to the browser. The
+       custom dot is hard to aim with when you're reading a UI, and this
+       selector has to out-specify the blanket `*` rule above. */
+    body.native-cursor, body.native-cursor * { cursor: default !important; }
+    body.native-cursor #cursor,
+    body.native-cursor #cursor-ring { display: none !important; }
+    .hidden-while-zoomed { display: none !important; }
+    #click, #portfolio-nav-btn, #portfolio-close,
     .start-btn, .win-btn, .win95-btn, .sidebar nav a,
     .taskbar-win-btn, button { cursor: pointer !important; }
     body.wall-hover canvas.cubeCanvas { cursor: pointer !important; }
@@ -65,17 +73,6 @@
     img{
         height: 2rem;
         pointer-events: none;
-    }
-    #music{
-        margin-right: 15px;
-    border: 2px solid white;
-    background: white;
-    border-radius: 5px;
-    padding: 2px 1px 1px 2px;
-
-    }
-    #music:hover{
-        cursor: pointer;
     }
     #click:hover{
         cursor: pointer;
@@ -310,7 +307,7 @@
      cursor: pointer;
    }
    .status-icon-btn img { height: 1.1rem; }
-   .status-icon-btn.muted { background: rgba(255,255,255,0.3); }
+   .status-icon-btn.muted { background: rgba(255,255,255,0.3); opacity: 0.5; }
 
    /* Ticket queue — top right */
    #ticket-queue-panel {
@@ -613,10 +610,11 @@
   <body>
 
 
-    <audio autoplay id="mySong" loop>
-    <source src="BIRDS OF A FEATHER - Billie Eilish free mp3.mp3" type="audio/mpeg">
-    Your browser doesn't support audio.
-   </audio>
+    <!-- Room music. Not autoplay: it starts when the visitor enters the room,
+         which is a click, so the browser lets it through. -->
+    <audio id="room-music" loop preload="auto">
+      <source src="/Billie%20Eilish%20-%20CHIHIRO%20(Lyrics).mp3" type="audio/mpeg">
+    </audio>
 
    <div id="loading-terminal">
   <div class="terminal-window">
@@ -662,9 +660,6 @@
         <div></div>
       </div>
       <div id="mu_cl">
-        <div id="music" style="margin-right: 15px;" >
-            <img src="./photo_stocks/music-note-icon-34255.png" alt="music">
-        </div>
         <div id="click">
              <img src="./photo_stocks/mouse-right-click-icon-15089.png" alt="mouse">
         </div>
@@ -688,7 +683,7 @@
       <div class="status-row">UPTIME: <span id="status-uptime">00:00:00</span></div>
       <div class="status-row">FIREWALL: <span class="status-on">ON</span>&nbsp;&nbsp;&nbsp;THREATS BLOCKED: <span id="status-threats">0</span></div>
       <div class="status-controls">
-        <div id="status-music-btn" class="status-icon-btn" title="Music / mute">
+        <div id="status-music-btn" class="status-icon-btn" title="Music on / off">
           <img src="./photo_stocks/music-note-icon-34255.png" alt="music">
         </div>
       </div>
@@ -723,6 +718,14 @@
       </div>
     </div>
 
+    <!-- Played straight onto the left tablet's mesh as a video texture, so it
+         lives in the 3D scene rather than floating over it. Muted so it can
+         autoplay and so it never fights the room music. -->
+    <video id="tablet-video" loop muted playsinline preload="auto">
+      <source src="/Video%20Project%2038.mp4" type="video/mp4">
+    </video>
+    <button id="screen-back-btn">← BACK <span class="back-hint">(ESC)</span></button>
+
     <canvas class="cubeCanvas"></canvas>
     <script>
       if (window.innerWidth <= 480) {
@@ -733,6 +736,7 @@
     <script>
       function closePortfolio() {
         document.getElementById('portfolio-overlay').style.display = 'none';
+        if (window.reeosLog) window.reeosLog('Closed the portfolio');
       }
       // click backdrop to close
       document.getElementById('portfolio-overlay').addEventListener('click', function(e) {
@@ -750,32 +754,6 @@ setInterval(() => {
   document.querySelectorAll('#time div')[2].textContent = parts[2];      // 2025
 }, 1000);
 
-
-// for the music
-  const audio = document.getElementById("mySong");
-
-  audio.volume = 0.3;   // start at 40%
-  document.body.addEventListener('click', () => {
-    document.getElementById('mySong').play();
-  }, { once: true });   // only needs one click, then removes listener
-  
-
-  const btn   = document.getElementById("music");
-
-  btn.addEventListener("click", () => {
-    if (audio.volume === 0) {
-      // turn sound back on
-      audio.volume = previousVolume;
-      btn.classList.remove("muted");
-    } else {
-      // mute (volume = 0) but keep playing
-      previousVolume = audio.volume;   // remember current level
-      audio.volume = 0;
-      btn.classList.add("muted");
-    }
-  });
-
-  // script for loading
 
 </script>
 
