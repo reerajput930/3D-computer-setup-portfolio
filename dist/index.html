@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">    
+<title>REE'</title>
+<script>
+  // Device check, before anything renders. Phones (touch + small screen, in
+  // either orientation) get the same 3D room with a compact layout and a
+  // lighter copy of the model; anything without WebGL falls back to the
+  // plain 2D page. three.js and the CSS both read these.
+  (function () {
+    var root = document.documentElement;
+    var phone = matchMedia('(pointer: coarse)').matches &&
+                Math.min(screen.width, screen.height) <= 600;
+    var gl = false;
+    try {
+      var c = document.createElement('canvas');
+      gl = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+    } catch (e) {}
+    if (phone) root.classList.add('phone');
+    if (!gl) root.classList.add('no3d');
+    window.REE_PHONE = phone;
+    window.REE_NO3D = !gl;
+    window.REE_MODEL_URL = phone ? '/room_mobile.glb' : '/room_v2_webp.glb';
+
+    // Start fetching the room straight away instead of after the JS runs.
+    if (gl) {
+      [window.REE_MODEL_URL, '/draco/draco_decoder.wasm'].forEach(function (href) {
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'fetch'; l.crossOrigin = 'anonymous'; l.href = href;
+        document.head.appendChild(l);
+      });
+    }
+  })();
+</script>
+    <script type="module" crossorigin src="/assets/main-DnmeRnUh.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/main-Bm-f8JMM.css">
+  </head>
+  <style>
+    * { cursor: none !important; }
+
+    /* Zoomed in on a screen: hand the pointer back to the browser. The
+       custom dot is hard to aim with when you're reading a UI, and this
+       selector has to out-specify the blanket `*` rule above. */
+    body.native-cursor, body.native-cursor * { cursor: default !important; }
+    body.native-cursor #cursor,
+    body.native-cursor #cursor-ring { display: none !important; }
+    .hidden-while-zoomed { display: none !important; }
+    #click, #portfolio-nav-btn, #portfolio-close,
+    .start-btn, .win-btn, .win95-btn, .sidebar nav a,
+    .taskbar-win-btn, button { cursor: pointer !important; }
+    body.wall-hover canvas.cubeCanvas { cursor: pointer !important; }
+
+    body {
+      margin: 0px;
+      padding: 0px;
+      background-image: url(/assets/universe-CTN1d1SP.webp);
+      background-size: cover;
+      background-position: center;
+      /* background-repeat: no-repeat; */
+    }
+    .cubeCanvas {
+      position: absolute;
+
+    }
+    .left_details{
+        margin-top: 4rem;
+        margin-left: 5rem;
+            position: fixed;
+    /* z-index: 9999; */
+    display: flex;
+    justify-content: left;
+    /* align-items: center; */
+    flex-direction: column;
+    z-index: 9;
+    }
+    div{
+        color:white;
+        font-family: "Orbitron", sans-serif;
+        
+    font-weight: bolder;
+    letter-spacing: 5px;
+    }
+    #name{
+        font-size: 25px;
+       
+    font-size: 3rem;
+    
+    }
+    #time{
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+    #mu_cl{
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+    img{
+        height: 2rem;
+        pointer-events: none;
+    }
+    #click:hover{
+        cursor: pointer;
+    }
+    #click{
+         margin-right: 15px;
+    border: 2px solid white;
+    background: white;
+    border-radius: 5px;
+    padding: 2px 1px 1px 2px;
+
+    }
+    .right_details{
+            position:fixed;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            margin-top: 6rem;
+            margin-right: .5rem;
+            z-index: 10;
+            justify-content: right;
+    align-items: end;
+    }
+    .right_details div{
+      margin-top: 8px;
+    }
+   #code-lines{
+    color: white;
+        font-weight: 200;
+    letter-spacing: 5px;
+    font-size: small;
+
+   }
+   /* Portfolio button */
+   #portfolio-nav-btn {
+     position: fixed;
+     bottom: 24px;
+     left: 24px;
+     padding: 7px 16px;
+     background: transparent;
+     border: 1px solid rgba(255,255,255,0.5);
+     color: #fff;
+     font-family: 'Orbitron', sans-serif;
+     font-size: 10px;
+     letter-spacing: 3px;
+     cursor: pointer;
+     z-index: 10;
+     transition: border-color 0.3s, color 0.3s;
+   }
+   #portfolio-nav-btn:hover {
+     border-color: #fff;
+     color: #fff;
+   }
+
+   /* Constellation panel */
+   #constellation-panel {
+     position: fixed;
+     right: 14px;
+     bottom: 30px;
+     width: 310px;
+     height: 360px;
+     z-index: 10;
+   }
+   .c-title {
+     color: rgba(255,255,255,0.9);
+     font-size: 10px;
+     letter-spacing: 3px;
+     text-align: center;
+     padding: 9px 0 0;
+     font-family: 'Orbitron', sans-serif;
+     text-shadow: 0 0 8px rgba(255,255,255,0.5);
+   }
+   #c-svg {
+     position: absolute;
+     inset: 0;
+     width: 100%;
+     height: 100%;
+     pointer-events: none;
+   }
+   .c-node {
+     position: absolute;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     transform: translate(-50%, -50%);
+     cursor: pointer;
+     z-index: 2;
+   }
+   .c-node:nth-child(2) { animation: cfloat 4.2s ease-in-out infinite; }
+   .c-node:nth-child(3) { animation: cfloat 3.6s ease-in-out infinite 0.5s; }
+   .c-node:nth-child(4) { animation: cfloat 5.0s ease-in-out infinite 1s; }
+   .c-node:nth-child(5) { animation: cfloat 3.9s ease-in-out infinite 0.3s; }
+   .c-node:nth-child(6) { animation: cfloat 4.5s ease-in-out infinite 0.8s; }
+   @keyframes cfloat {
+     0%,100% { transform: translate(-50%,-50%) translateY(0); }
+     50%      { transform: translate(-50%,-50%) translateY(-5px); }
+   }
+   .c-circle {
+     width: 64px; height: 64px;
+     border-radius: 50%;
+     background: rgba(255,255,255,0.06);
+     border: 1px solid rgba(255,255,255,0.22);
+     display: flex; align-items: center; justify-content: center;
+     overflow: hidden;
+     transition: all 0.3s;
+   }
+   .c-circle img { width: 42px; height: 42px; object-fit: contain; filter: brightness(0.85); transition: filter 0.3s; }
+   .c-node:hover .c-circle {
+     background: rgba(255,255,255,0.14);
+     border-color: rgba(255,255,255,0.75);
+     box-shadow: 0 0 12px rgba(255,255,255,0.35), 0 0 24px rgba(255,255,255,0.1);
+   }
+   .c-node:hover .c-circle img { filter: brightness(1.15); }
+   .c-label {
+     color: rgba(255,255,255,0.0);
+     font-size: 10px; letter-spacing: 1px;
+     margin-top: 6px; text-transform: uppercase;
+     font-family: 'Orbitron', sans-serif;
+     transition: color 0.3s;
+     white-space: nowrap;
+   }
+   .c-node:hover .c-label { color: rgba(255,255,255,0.75); }
+
+   /* Online status dot, pinned near the top-right of each node's circle */
+   .c-status-dot {
+     position: absolute;
+     top: 8px;
+     left: calc(50% + 21px);
+     transform: translate(-50%, -50%);
+     width: 8px; height: 8px;
+     border-radius: 50%;
+     background: #39FF14;
+     box-shadow: 0 0 6px #39FF14;
+     border: 1px solid rgba(0,0,0,0.6);
+   }
+   .c-status-dot.c-status-pending {
+     background: #FFB627;
+     box-shadow: 0 0 6px #FFB627;
+   }
+
+   /* Hover tooltip — shows each node's real role */
+   .c-hover-tooltip {
+     position: absolute;
+     display: none;
+     top: 0; left: 0;
+     background: rgba(10,12,10,0.92);
+     border: 1px solid #39FF14;
+     color: rgba(255,255,255,0.9);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 11px;
+     padding: 6px 10px;
+     border-radius: 4px;
+     white-space: nowrap;
+     pointer-events: none;
+     z-index: 6;
+     transform: translate(-50%, -135%);
+   }
+   .c-hover-tooltip.visible { display: block; }
+   .c-hover-tooltip.pending { border-color: #FFB627; color: #FFB627; }
+
+   /* REE hub node — centre of the network map, stays put (no float) */
+   .c-circle-ree {
+     width: 58px; height: 58px;
+     border-color: #B388FF;
+     background: rgba(179,136,255,0.1);
+     box-shadow: 0 0 14px rgba(179,136,255,0.4);
+   }
+   .c-ree-label {
+     font-family: 'Orbitron', sans-serif;
+     font-size: 9px;
+     letter-spacing: 1px;
+     color: #B388FF;
+     text-align: center;
+     line-height: 1.3;
+   }
+   #c-node-ree { animation: none !important; z-index: 3; }
+
+   /* Tech Info — on hold, dotted amber node instead of a solid online one */
+   .c-node-pending .c-circle {
+     border-style: dashed;
+     border-color: #FFB627;
+   }
+   .c-node-pending .c-label {
+     color: rgba(255,182,39,0.6);
+   }
+   .c-node-pending:hover .c-label { color: #FFB627; }
+
+   /* Status bar — top left */
+   #status-bar {
+     display: none;
+     position: fixed;
+     top: 2.5rem;
+     left: 2.5rem;
+     z-index: 9;
+     width: 240px;
+     background: rgba(10,12,10,0.78);
+     border: 1px solid #39FF14;
+     box-shadow: 0 0 14px rgba(57,255,20,0.18);
+     border-radius: 6px;
+     padding: 10px 13px;
+     font-family: 'Courier New', Courier, monospace;
+   }
+   #status-bar.visible { display: block; }
+   .status-row {
+     color: rgba(255,255,255,0.75);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 10px;
+     letter-spacing: 0;
+     font-weight: normal;
+     display: flex;
+     justify-content: space-between;
+     margin-top: 4px;
+   }
+   .status-row:first-child { margin-top: 0; }
+   .status-online { color: #39FF14; display: flex; align-items: center; gap: 6px; }
+   .online-dot {
+     width: 7px; height: 7px;
+     border-radius: 50%;
+     background: #39FF14;
+     box-shadow: 0 0 6px #39FF14;
+     display: inline-block;
+   }
+   .status-on { color: #39FF14; }
+   .status-controls { margin-top: 8px; }
+   .status-icon-btn {
+     display: inline-flex;
+     width: 1.6rem; height: 1.6rem;
+     align-items: center; justify-content: center;
+     border: 2px solid white;
+     background: white;
+     border-radius: 5px;
+     cursor: pointer;
+   }
+   .status-icon-btn img { height: 0.9rem; }
+   .status-icon-btn.muted { background: rgba(255,255,255,0.3); opacity: 0.5; }
+
+   /* Ticket queue — top right */
+   #ticket-queue-panel {
+     display: none;
+     position: fixed;
+     top: 2.5rem;
+     right: 2.5rem;
+     z-index: 9;
+     width: 290px;
+     max-width: calc(100vw - 4rem);
+     box-sizing: border-box;
+     background: rgba(10,12,10,0.78);
+     border: 1px solid #39FF14;
+     box-shadow: 0 0 14px rgba(57,255,20,0.18);
+     border-radius: 6px;
+     padding: 11px 13px;
+     font-family: 'Courier New', Courier, monospace;
+   }
+   #ticket-queue-panel.visible { display: block; }
+   .tq-title {
+     font-family: 'Orbitron', sans-serif;
+     font-size: 9px;
+     letter-spacing: 2px;
+     color: #39FF14;
+     margin-bottom: 8px;
+   }
+   .tq-list {
+     display: flex;
+     flex-direction: column;
+   }
+   .tq-row {
+     display: grid;
+     grid-template-columns: 38px 1fr auto;
+     gap: 8px;
+     align-items: baseline;
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 10px;
+     font-weight: normal;
+     letter-spacing: 0;
+     color: rgba(255,255,255,0.7);
+     white-space: nowrap;
+     margin-top: 6px;
+     opacity: 1;
+     transform: translateY(0);
+     transition: opacity 0.4s ease, transform 0.4s ease;
+   }
+   .tq-row.tq-row-enter {
+     opacity: 0;
+     transform: translateY(10px);
+   }
+   .tq-desc { overflow: hidden; text-overflow: ellipsis; }
+   .tq-status { font-weight: bold; }
+   .tq-closed { color: #39FF14; }
+   .tq-progress { color: #FFB627; }
+
+   /* Portfolio overlay */
+   #portfolio-overlay {
+     display: none;
+     position: fixed;
+     inset: 0;
+     background: rgba(0,0,0,0.6);
+     z-index: 9999;
+     align-items: center;
+     justify-content: center;
+   }
+   #portfolio-window {
+     width: 88vw;
+     height: 88vh;
+     border: 3px solid;
+     border-color: #fff #808080 #808080 #fff;
+     box-shadow: 4px 4px 0 #000;
+     display: flex;
+     flex-direction: column;
+   }
+   #portfolio-titlebar {
+     background: #000080;
+     color: #fff;
+     padding: 5px 8px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     font-family: 'Courier New', monospace;
+     font-size: 13px;
+     font-weight: bold;
+     flex-shrink: 0;
+   }
+   .ptb-left { display: flex; align-items: center; gap: 6px; }
+   #portfolio-close {
+     width: 20px; height: 18px;
+     background: #c0c0c0;
+     border: 1px solid; border-color: #fff #808080 #808080 #fff;
+     color: #000; font-size: 11px; cursor: pointer;
+     display: flex; align-items: center; justify-content: center;
+     font-family: 'Courier New', monospace;
+   }
+   #portfolio-close:active { border-color: #808080 #fff #fff #808080; }
+   #portfolio-iframe {
+     flex: 1;
+     border: none;
+     background: #008080;
+   }
+
+   /* Custom cursor */
+   #cursor {
+     position: fixed;
+     width: 10px; height: 10px;
+     border-radius: 50%;
+     background: #fff;
+     box-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,0.6);
+     pointer-events: none;
+     transform: translate(-50%, -50%);
+     z-index: 999999;
+   }
+   #cursor-ring {
+     position: fixed;
+     width: 32px; height: 32px;
+     border-radius: 50%;
+     border: 1px solid rgba(255,255,255,0.45);
+     pointer-events: none;
+     transform: translate(-50%, -50%);
+     z-index: 999998;
+   }
+   .trail-dot {
+     position: fixed;
+     border-radius: 50%;
+     pointer-events: none;
+     z-index: 999997;
+     transform: translate(-50%, -50%);
+     background: #fff;
+     box-shadow: 0 0 4px rgba(255,255,255,0.7);
+   }
+   body.cursor-hover #cursor {
+     width: 16px; height: 16px;
+     background: #fff;
+     box-shadow: 0 0 14px #fff, 0 0 30px rgba(255,255,255,0.7);
+     transition: width 0.15s, height 0.15s, box-shadow 0.15s;
+   }
+   body.cursor-hover #cursor-ring {
+     width: 44px; height: 44px;
+     border-color: rgba(255,255,255,0.8);
+     transition: width 0.15s, height 0.15s, border-color 0.15s;
+   }
+   body.cursor-click #cursor {
+     width: 6px; height: 6px;
+     background: #aef;
+     box-shadow: 0 0 12px #aef, 0 0 28px rgba(170,238,255,0.8);
+   }
+   body.cursor-click #cursor-ring {
+     width: 48px; height: 48px;
+     border-color: rgba(170,238,255,0.55);
+     transition: width 0.15s, height 0.15s, border-color 0.15s;
+   }
+
+   /* ── Tablet ── */
+   @media (max-width: 768px) {
+     .left_details {
+       margin-top: 1.2rem;
+       margin-left: 1.5rem;
+     }
+     #name { font-size: 2rem; }
+     div { letter-spacing: 3px; font-size: 13px; }
+
+     .right_details {
+       margin-top: 1.2rem;
+       margin-right: 0.75rem;
+     }
+     .right_details div { font-size: 11px; letter-spacing: 2px; margin-top: 5px; }
+
+     #constellation-panel {
+       width: 260px;
+       height: 300px;
+       right: 8px;
+       bottom: 60px;
+     }
+     .c-circle { width: 58px; height: 58px; }
+     .c-circle img { width: 38px; height: 38px; }
+     .c-title { font-size: 8px; letter-spacing: 2px; }
+     .c-label { font-size: 8px; }
+
+     #portfolio-window { width: 96vw; height: 92vh; }
+
+     #portfolio-nav-btn { bottom: 16px; left: 16px; font-size: 9px; padding: 6px 12px; }
+   }
+
+   /* ── No-WebGL fallback ── plain 2D page (the old phone layout). Phones
+      with WebGL get the 3D room and the html.phone rules below instead. */
+
+     /* Hide 3D canvas and cursor */
+     html.no3d canvas.cubeCanvas  { display: none; }
+     html.no3d #cursor, html.no3d #cursor-ring, html.no3d .trail-dot  { display: none; }
+     html.no3d *  { cursor: auto !important; }
+
+     html.no3d body  {
+       overflow-y: auto;
+       height: auto;
+       min-height: 100vh;
+       display: flex;
+       flex-direction: column;
+     }
+
+     /* Full-screen mobile hero layout */
+     html.no3d .left_details  {
+       position: relative;
+       margin: 0;
+       padding: 48px 24px 20px;
+       width: 100%;
+     }
+     html.no3d #name  { font-size: 2.4rem; letter-spacing: 4px; }
+     html.no3d .left_details div  { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+     html.no3d #mu_cl  { margin-top: 16px; }
+
+     /* Right titles: reposition below left details */
+     html.no3d .right_details  {
+       position: relative;
+       right: auto;
+       margin: 0;
+       padding: 0 24px 24px;
+       align-items: flex-start;
+       width: 100%;
+     }
+     html.no3d .right_details div  { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+
+     /* Constellation panel: full-width grid below */
+     html.no3d #constellation-panel  {
+       position: relative;
+       right: auto;
+       bottom: auto;
+       width: 100%;
+       height: auto;
+       padding: 16px 24px 24px;
+     }
+     html.no3d .c-title  {
+       display: block;
+       text-align: left;
+       font-size: 9px;
+       letter-spacing: 3px;
+       margin-bottom: 16px;
+       padding: 0;
+     }
+     html.no3d #c-svg  { display: none; }
+
+     /* REE hub node is a desktop hub-map concept — mobile keeps its plain brand grid */
+     html.no3d #c-node-ree  { display: none; }
+     html.no3d .c-status-dot, html.no3d .c-hover-tooltip  { display: none; }
+
+     /* Grid layout for brand nodes */
+     html.no3d .c-node  {
+       position: relative !important;
+       left: auto !important;
+       top: auto !important;
+       transform: none !important;
+       animation: none !important;
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       margin: 8px;
+     }
+     /* Wrap nodes in a flex grid */
+     html.no3d #constellation-panel  {
+       display: flex;
+       flex-direction: column;
+     }
+     html.no3d #constellation-panel > .c-node  {
+       display: inline-flex;
+     }
+     html.no3d .mobile-brands-grid  {
+       display: flex;
+       flex-wrap: wrap;
+       justify-content: center;
+       gap: 12px;
+     }
+     html.no3d .c-circle  { width: 60px; height: 60px; }
+     html.no3d .c-circle img  { width: 40px; height: 40px; }
+     html.no3d .c-label  {
+       color: rgba(255,255,255,0.55) !important;
+       font-size: 9px;
+       display: block;
+     }
+
+     /* Portfolio button — big and centered */
+     html.no3d #portfolio-nav-btn  {
+       position: relative;
+       bottom: auto;
+       left: auto;
+       width: calc(100% - 48px);
+       margin: 8px 24px 40px;
+       padding: 14px 0;
+       font-size: 12px;
+       letter-spacing: 4px;
+       text-align: center;
+       border: 1px solid rgba(255,255,255,0.6);
+     }
+
+     /* Portfolio overlay full-screen */
+     html.no3d #portfolio-window  { width: 100vw; height: 100vh; border: none; }
+
+     /* Show disclaimer */
+     html.no3d #mobile-disclaimer  { display: block !important; }
+
+
+   /* Touch screens have no pointer to follow — drop the custom cursor. */
+   @media (hover: none) {
+     #cursor, #cursor-ring, .trail-dot { display: none !important; }
+   }
+
+   /* ── Phone (3D) ── same room as desktop, compact HUD around it.
+      Portrait: status + tickets on top, room in the middle, network map
+      and Portfolio button underneath. Landscape: the desktop corners,
+      shrunk. html.phone is set in <head> (touch + small screen). */
+   html.phone, html.phone body {
+     height: 100%;
+     overflow: hidden;
+     overscroll-behavior: none;
+     -webkit-tap-highlight-color: transparent;
+   }
+
+   /* Boot terminal */
+   html.phone .header { font-size: 0.85rem; padding: calc(env(safe-area-inset-top) + 8px) 12px 8px; }
+   html.phone .body { font-size: 11.5px; line-height: 18px; margin: 12px; }
+   /* The terminal's wide Orbitron tracking would wrap every check line on a phone */
+   html.phone #code-lines { font-size: 10px; letter-spacing: 0.5px; }
+   html.phone #code-lines div { font-size: 10px; }
+
+   /* Login */
+   html.phone #login-screen {
+     gap: 14px;
+     padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+     overflow-y: auto;
+     justify-content: safe center;
+     box-sizing: border-box;
+   }
+   html.phone .login-row { gap: 14px; }
+   html.phone .login-card { width: min(300px, calc(100vw - 32px)); padding: 16px 18px; }
+   html.phone .login-username { font-size: 18px; margin-bottom: 10px; }
+   html.phone .login-field { font-size: 12px; }
+   html.phone .ticket-card { width: min(624px, calc(100vw - 32px)); max-width: none; }
+   html.phone .login-ticket-lines { font-size: 10.5px; line-height: 18px; white-space: pre-wrap; }
+
+   /* Status bar — slim strip along the top, music button on its right */
+   html.phone #status-bar {
+     top: calc(env(safe-area-inset-top) + 10px);
+     left: 12px; right: 12px;
+     width: auto;
+     box-sizing: border-box;
+     padding: 8px 52px 8px 12px;
+   }
+   html.phone .status-row { font-size: 9px; margin-top: 3px; }
+   html.phone .status-row:first-child { margin-top: 0; }
+   html.phone #status-bar .status-row:nth-child(2) { display: none; } /* location is on the login card */
+   html.phone .status-controls {
+     position: absolute;
+     right: 10px; top: 50%;
+     transform: translateY(-50%);
+     margin: 0;
+   }
+
+   /* Ticket queue — under the status strip, two rows */
+   html.phone #ticket-queue-panel {
+     top: calc(env(safe-area-inset-top) + 75px);
+     left: 12px; right: 12px;
+     width: auto; max-width: none;
+     padding: 8px 12px;
+   }
+   html.phone .tq-title { font-size: 8px; margin-bottom: 4px; }
+   html.phone .tq-row { font-size: 9px; margin-top: 4px; grid-template-columns: 34px 1fr auto; }
+
+   /* Network map — mini hub along the bottom */
+   html.phone #constellation-panel {
+     left: 12px; right: 12px;
+     width: auto;
+     height: 150px;
+     bottom: calc(env(safe-area-inset-bottom) + 58px);
+   }
+   html.phone .c-title { font-size: 8px; letter-spacing: 2px; padding-top: 0; }
+   html.phone .c-circle { width: 40px; height: 40px; }
+   html.phone .c-circle img { width: 28px; height: 28px; }
+   html.phone .c-circle-ree { width: 38px; height: 38px; }
+   html.phone .c-ree-label { font-size: 7px; }
+   html.phone .c-label { display: none; }
+   html.phone .c-status-dot { top: 6px; left: calc(50% + 14px); width: 6px; height: 6px; }
+   /* Nodes sit on an ellipse round the hub so nothing crowds the title */
+   html.phone #c-node-ree           { left: 50% !important;   top: 54% !important; }
+   html.phone .c-node[data-id="0"]  { left: 27.6% !important; top: 31% !important; }
+   html.phone .c-node[data-id="2"]  { left: 72.4% !important; top: 31% !important; }
+   html.phone .c-node[data-id="1"]  { left: 13% !important;   top: 62% !important; }
+   html.phone .c-node[data-id="4"]  { left: 87% !important;   top: 62% !important; }
+   html.phone .c-node[data-id="3"]  { left: 50% !important;   top: 89% !important; }
+   /* A tap shows the role pinned above the map, so edge nodes can't push it off-screen */
+   html.phone .c-hover-tooltip {
+     left: 50% !important; top: 0 !important;
+     transform: translate(-50%, -115%);
+     font-size: 10px;
+   }
+
+   /* Portfolio — full-width, thumb-sized */
+   html.phone #portfolio-nav-btn {
+     left: 12px; right: 12px;
+     bottom: calc(env(safe-area-inset-bottom) + 12px);
+     padding: 11px 0;
+     font-size: 10px;
+     text-align: center;
+     background: rgba(0,0,0,0.45);
+   }
+
+   html.phone #screen-back-btn {
+     bottom: calc(env(safe-area-inset-bottom) + 24px);
+     padding: 13px 34px;
+     font-size: 11px;
+   }
+   html.phone #screen-back-btn .back-hint { display: none; }
+
+   html.phone #portfolio-window { width: 100vw; height: 100vh; height: 100dvh; border: none; box-shadow: none; }
+   html.phone #portfolio-titlebar { padding-top: calc(env(safe-area-inset-top) + 6px); }
+   html.phone #portfolio-close { width: 34px; height: 28px; font-size: 14px; }
+
+   /* "Best on a laptop" — a quiet one-off note, not a wall */
+   #phone-toast {
+     display: none;
+     position: fixed;
+     left: 50%;
+     top: calc(env(safe-area-inset-top) + 152px);
+     transform: translate(-50%, -6px);
+     z-index: 15;
+     width: max-content;
+     max-width: calc(100vw - 32px);
+     box-sizing: border-box;
+     background: rgba(10,12,10,0.9);
+     border: 1px solid #B388FF;
+     box-shadow: 0 0 14px rgba(179,136,255,0.3);
+     border-radius: 18px;
+     padding: 8px 14px;
+     color: rgba(255,255,255,0.88);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 11px;
+     font-weight: normal;
+     letter-spacing: 0;
+     text-align: center;
+     opacity: 0;
+     transition: opacity 0.4s ease, transform 0.4s ease;
+   }
+   #phone-toast.shown { display: block; }
+   #phone-toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+   /* Phone on its side — back to the desktop corners, compact */
+   @media (orientation: landscape) {
+     html.phone #status-bar {
+       top: 10px; left: calc(env(safe-area-inset-left) + 12px); right: auto;
+       width: 280px;
+     }
+     html.phone #ticket-queue-panel {
+       top: 10px; right: calc(env(safe-area-inset-right) + 12px); left: auto;
+       width: 250px;
+     }
+     html.phone #constellation-panel {
+       left: auto; right: calc(env(safe-area-inset-right) + 12px);
+       width: 250px; height: 150px;
+       bottom: 10px;
+     }
+     html.phone #portfolio-nav-btn {
+       left: calc(env(safe-area-inset-left) + 12px); right: auto;
+       bottom: 12px;
+       padding: 9px 18px;
+     }
+     html.phone #screen-back-btn { bottom: 16px; }
+     html.phone .body { line-height: 14px; }
+     html.phone #phone-toast { top: auto; bottom: 14px; }
+   }
+  </style>
+  <body>
+
+
+    <!-- Room music. Not autoplay: it starts when the visitor enters the room,
+         which is a click, so the browser lets it through. -->
+    <audio id="room-music" loop preload="none">
+      <source src="/Billie Eilish - CHIHIRO (Lyrics).mp3" type="audio/mpeg">
+    </audio>
+
+   <div id="loading-terminal">
+  <div class="terminal-window">
+    <div class="header">
+      <span class="title">onboarding.exe</span>
+    </div>
+    <div class="body">
+      <div id="code-lines"></div>
+    </div>
+  </div>
+</div>
+
+<div id="login-screen">
+  <div class="login-row">
+    <div class="login-card user-card">
+      <div class="login-card-label">USER</div>
+      <div class="login-username">RIYA (REE)</div>
+      <div class="login-field"><span class="login-field-label">ROLE</span>IT Support · Cybersecurity</div>
+      <div class="login-field"><span class="login-field-label">ALSO</span>Developer · 3D Creator · Content Creator (3K)</div>
+      <div class="login-field"><span class="login-field-label">WHERE</span>Toronto, ON</div>
+    </div>
+
+    <div class="login-card login-box">
+      <div class="login-card-label">LOG IN</div>
+      <input type="text" class="login-input" value="Guest (Recruiter)" readonly>
+      <button id="login-enter-btn" class="login-enter-btn">ENTER</button>
+      <a href="#" id="login-forgot-link" class="login-forgot-link">Forgot password?</a>
+    </div>
+  </div>
+
+  <div class="login-card ticket-card" id="login-ticket-card">
+    <div class="login-card-label">TICKET #0001</div>
+    <div id="login-ticket-lines" class="login-ticket-lines"></div>
+  </div>
+</div>
+
+    <div class="left_details">
+      <div id="name">RIYA</div>
+      <div>ONTARIO, CANADA 🍁</div>
+      <div id="time">
+        <div style="margin-right: 15px;"></div>
+        <div style="margin-right: 15px;"></div>
+        <div></div>
+      </div>
+      <div id="mu_cl">
+        <div id="click">
+             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAIl0lEQVR42u2djZHkNBCF30WwRwQ3RMARwYoI7oiAIYK7i4AhAo4IMBGwRICJgCMChghYIgC/sl3rddmeblm/lr4q1W7tzo9belK3WrL1AuH4oivvu3Ke/O2hK5eu/BnwOioTXgT6HjZ+25WXC/97RC+KX2NXRomEEsBfXTlt/P/alddd+TdyfRRHCAHco+/9t3iLOgoERyoADuEcqv+2+I7v0Pv5W/A130euD9o5uqmrpb1ZsSWAu658xPOg7Tr87UfFd6QigFfo3ZBB38ivh/JS+P7rUD5NfrJk7bbWBMDGb9FX0BJNV74VfkcsAdAGMxS6l5PDz55CEbSTkpUg1gTwE573/CUayEQQUgBs9LfDtRsXFWTBw1A3WcQzawL4B7KhkYbeEkEIATDQPKNvfOmQ7hvGTGOeI9lYYkkAd8PFS2mwLQKfArgf3mf8VI8z2uE6f499IXOWBMBI+JPycxqsi+Ad+sDxFhfIBfBm+MyT7wpyTIvEhLDmAm4lbpZosCwCqaAMblfMq+F7TJjq8QZdwxkJBIxrApD22jkGy434C3r/vEbbla82/k+3xHWES+gK8sjjYI9mSu2crTyAZCYwp8HyKLA1reToYLDeGziCsMecYlWSZ2g/O0eUQPFWJlArghbbPfkbPI/UG/SNu9b4tiNRbkRbEJOkgjUiaLEtACkcMRpsu43Q8FpeT8rJw3dQ7B9CGiVdC5CKgH56r0/jkN9gPQsZi3ldMSA16IXhUqi3XKJXo7a4JQIOY6edF761byA2t9ZNXGYgg4lAuxz8A/pePudxuOA9O3tSbnwirSuODBfoA+g5LurUmVFTmH0b/SEvskU/ZO9RKxM7Dz4NdYC2rlwIwbsIQu0I2iL1nj9iW1d7Y5rH4b1epomxBZBL45O9dcUp7cXSVm8xQUwBMHC6WlZIDFzU1Z7RwIsIYgrgN+SV03dVV0s7raQ0kG/EsTKKAZ7ZeD0DNRcBiXSJOCVcdxbbLOe5Kz+7NkqTb2/RzwJshyLpLuHU8DFaMjXeKN/jdGZAo2wCMVt/lJvfn+LLXdqIgPX/pSujbi3VrnGGfiiyWWFMBZ/xko0ILnCwiZZG/Wf53ha6hZ9ch/4R3wGzVgRO8gMhBfAH0lvg0RBixqQdIRm3fb3XqBACOMK6fqgps7ajGOzYY0ijbP2yZunXZo9haoQSANcQGORJA+UWO/ZghJgF2AQ4KRIyaaYdMQ0sRwHbPMAZ8uDjCL2fhM6aajKlLSxHgblR7K2njddrM4FH6f0ktAC092cYWIwCvo3KPfKfEmPdRBOfNbBYJ/BpFIOZq8fPD00MAWjq0GpLnk+j1raP5UqslVPNKMDXqbKzPo06SvA3EksAmlFAnRjyZZTNDaapE3PvhGa9htN5sRvwZVSO6/23iCkAzWzqDIUb8GVUbrt9JMTeP+nyoR3ejbJdX0iZ2AKQBoPXrnwe06jcl33XiC0AjRs4QZip9WHUEf0/iS0AzaN7xA/d9GFUzrt+togtACLNrF4g3C3kw6gjBoAkBQFIk2sNhIGgD6OOGACSFAQgda8thKuDro3SPmIuJ1IQgCbAFl2va6OOOgMgKQhAkxauAnBMCgIgUhdbBeCY3ARgINgg4tqoHB70YEsVgICjJoFIKgKQ5gIMqgCckooApHkWvqYKwCFVAAKqAPxTBRCJKgABVQD+qQKIRBWAgCoA/1QBRKIKQEAVgH+qACJRBSDgyALIDYMqgKIxqAIoGoMqgKIxqAIoGoMqgKIxqAIoGoMqgKIxqAIoGoMqgKIxSFgALdwcMVsih0gFt6gCsKUKoHCqAAqnCqBwqgAKJ+k7g6Q3h/I1VQB2JH1vYBWAfw4hAGfn3hXIYZ4PkMoeu5zQPIM5igA0zwg6YeeZdwWS/DOCiFMfVXlG8k8JI9J5Kg3ZffRpYWTxnEDpk0J3n3pZINJDOC6I+KRQ6TDFWOEzD99/VDSPiIv6rGBNoMKMluYYupLJ5mnhRBoIao6fLR2pa1XlWGKfGHKF4nCDguH0+grZiSE8cvaD9INTODOouoHbaIZ/sf8nKZwaplJsoWR3ahiRTlmsTrwsiCzPDSQaN8DX1aTQMtmeHOr93NsC0NahOq/ie0VOc3zMBXUUmJP16eFEE71SwZwR1BXCHu2j961mUyHW5DWHSNf1gSeke/9IC8sdViEEoBkFiEFdJn6HfnosxcCyzkLtytGMAqUHhMyhtJBl/YCd+ytDCUA7CuwyKmPuBtulQz8x2DFihtyXpz1Q8oLyZgXaU1cbWET+U0IKQJMeHmFlqBIbGSPd7TPixFWG3pmrNZKoFjcyResiiZOl9NACoI/jKHBSvIdKNzjuiqFN4zu7ryLG3nwbV0DOOJ47sGl8pwmzWDdnaOe5I2ccRwTagG/EqUuMeXeOZo17Su77B+gGm1RsjykAmznvCF0IKzC3dQO6P6a7T5Y2O7+fMvb9eZq9bnPoCxkJ5+IS9jxBjY1v4CE7GlsARJv6nMP3UgipzhK4qtfArtcTb41PUhAA2SsC0qDvYam4BTY8hWnj60e8T4FTEQBxIQLSIK4Q7ofvNzs/J0ick5IAyJ4gaQ4r8OPweb5XFrl1i4313uG1mwDXnZwAyJ7ZwRoPw2eyuBpOKVY2usH+3j6lHT43yHJ4igIgFAF779nDZ9Ovsoe1k9/J0pIqr2MUIn+ehp8se13VEhcEXgFNVQAjTJVSCD4qOyUoRPb64DuhUhcA4VDbwK1LSIkWAYf8OTkIYISJFAZZRxkNkkhk5SQAwmibLmHP3DoFaMMFCex7zE0AI67m2qFpkFayKlsBjOQihAaJNfxI7gIYoWugPz0jnRjhir7hWZJr+JGjCGDKG/QxwjnCdzOwY9KpQSY3txxRAFPoIgzcZ+umtHjKNKa6IrnK0QUwh4I44SmjN/6U0OIpc/hp+D2LXr7F/3xcIZ+AyAxnAAAAAElFTkSuQmCC" alt="mouse">
+        </div>
+      </div>
+    </div>
+    <div class="right_details">
+       <div>FULL-STACK DEVELOPER</div>
+      <div>UI/UX DESIGNER</div>
+      <div>3D INTERACTION ARTIST</div>
+      <div>CONTENT CREATOR(3K)</div>
+
+    </div>
+
+    <!-- Status bar — top left -->
+    <div id="status-bar">
+      <div class="status-row">
+        <span>USER: RIYA</span>
+        <span class="status-online"><span class="online-dot"></span>STATUS: ONLINE</span>
+      </div>
+      <div class="status-row">LOCATION: TORONTO, ON</div>
+      <div class="status-row">UPTIME: <span id="status-uptime">00:00:00</span></div>
+      <div class="status-row">FIREWALL: <span class="status-on">ON</span>&nbsp;&nbsp;&nbsp;THREATS BLOCKED: <span id="status-threats">0</span></div>
+      <div class="status-controls">
+        <div id="status-music-btn" class="status-icon-btn" title="Music on / off">
+          <img src="/assets/music-note-icon-34255-CV9jz6fd.png" alt="music">
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket queue — top right -->
+    <div id="ticket-queue-panel">
+      <div class="tq-title">TICKET QUEUE · <span id="tq-closed-count">2</span> CLOSED TODAY</div>
+      <div class="tq-list" id="tq-list">
+        <div class="tq-row"><span>#1042</span><span class="tq-desc">Password reset</span><span class="tq-status tq-closed">CLOSED</span></div>
+        <div class="tq-row"><span>#1043</span><span class="tq-desc">VPN not connecting</span><span class="tq-status tq-closed">CLOSED</span></div>
+        <div class="tq-row"><span>#1044</span><span class="tq-desc">Printer offline</span><span class="tq-status tq-progress" id="tq-initial-status">IN PROGRESS</span></div>
+      </div>
+    </div>
+
+
+
+    <button id="portfolio-nav-btn" onclick="if(window.REE_NO3D){window.location.href='/portfolio.html'}else{window.goToWall&&window.goToWall()}">PORTFOLIO</button>
+    <div id="mobile-disclaimer" style="display:none;text-align:center;color:rgba(255,255,255,0.25);font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:0 24px 24px;">⚠ BEST EXPERIENCED ON DESKTOP</div>
+
+    <!-- Portfolio overlay popup -->
+    <div id="portfolio-overlay">
+      <div id="portfolio-window">
+        <div id="portfolio-titlebar">
+          <div class="ptb-left">
+            <span>📁</span>
+            <span>Riya — Showcase 2026</span>
+          </div>
+          <button id="portfolio-close" onclick="closePortfolio()">✕</button>
+        </div>
+        <iframe id="portfolio-iframe" src="/portfolio.html"></iframe>
+      </div>
+    </div>
+
+    <!-- Played straight onto the left tablet's mesh as a video texture, so it
+         lives in the 3D scene rather than floating over it. Muted so it can
+         autoplay and so it never fights the room music. -->
+    <video id="tablet-video" loop muted playsinline preload="none">
+      <source src="/Video Project 38.mp4" type="video/mp4">
+    </video>
+    <div id="phone-toast">💻 Best on a laptop, but feel free to explore</div>
+    <button id="screen-back-btn">← BACK <span class="back-hint">(ESC)</span></button>
+
+    <canvas class="cubeCanvas"></canvas>
+    <script>
+      if (window.REE_NO3D) {
+        document.getElementById('loading-terminal').style.display = 'none';
+      }
+    </script>
+    <script>
+      function closePortfolio() {
+        document.getElementById('portfolio-overlay').style.display = 'none';
+        if (window.reeosLog) window.reeosLog('Closed the portfolio');
+      }
+      // click backdrop to close
+      document.getElementById('portfolio-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closePortfolio();
+      });
+    </script>
+    <script>
+setInterval(() => {
+  const parts = new Date().toLocaleString('en-US', {
+    hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
+    weekday: 'long', year: 'numeric'
+  }).split(', ');
+  document.querySelectorAll('#time div')[0].textContent = parts[0];      // 14:35:22
+  document.querySelectorAll('#time div')[1].textContent = parts[1];      // Wednesday
+  document.querySelectorAll('#time div')[2].textContent = parts[2];      // 2025
+}, 1000);
+
+
+</script>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Network map panel -->
+  <div id="constellation-panel">
+    <div class="c-title">NETWORK MAP · 5 NODES ONLINE</div>
+    <svg id="c-svg"></svg>
+    <div id="c-hover-tooltip" class="c-hover-tooltip"></div>
+
+    <div class="c-node c-node-ree" id="c-node-ree" style="left:50%;top:50%">
+      <div class="c-circle c-circle-ree"><div class="c-ree-label">REE<br>ADMIN</div></div>
+    </div>
+
+    <div class="mobile-brands-grid">
+      <div class="c-node c-node-pending" style="left:50%;top:22%" data-id="0" data-role="On hold. See open items.">
+        <div class="c-circle"><img src="/logos/Tech Info.png" alt="Tech Info"></div>
+        <span class="c-status-dot c-status-pending"></span>
+        <div class="c-label">Tech Info ?</div>
+      </div>
+      <div class="c-node" style="left:18%;top:46%" data-id="1" data-role="IT Help Desk Intern">
+        <div class="c-circle"><img src="/logos/Genieall.png" alt="Genieall"></div>
+        <span class="c-status-dot"></span>
+        <div class="c-label">Genieall</div>
+      </div>
+      <div class="c-node" style="left:82%;top:44%" data-id="2" data-role="Learn Student Ambassador">
+        <div class="c-circle"><img src="/logos/microsoft.png" alt="Microsoft"></div>
+        <span class="c-status-dot"></span>
+        <div class="c-label">Microsoft</div>
+      </div>
+      <div class="c-node" style="left:32%;top:74%" data-id="3" data-role="Coding with Ree', 3K">
+        <div class="c-circle"><img src="/logos/youtube.png" alt="YouTube"></div>
+        <span class="c-status-dot"></span>
+        <div class="c-label">YouTube</div>
+      </div>
+      <div class="c-node" style="left:70%;top:76%" data-id="4" data-role="Developer Student Club Co-Lead">
+        <div class="c-circle"><img src="/logos/google.png" alt="Google"></div>
+        <span class="c-status-dot"></span>
+        <div class="c-label">Google</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Custom cursor
+    const TRAIL_COUNT = 12;
+    const cursorEl   = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    const trailDots  = [];
+
+    for (let i = 0; i < TRAIL_COUNT; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('trail-dot');
+      const size = Math.max(1.5, 5 - i * 0.3);
+      dot.style.width   = size + 'px';
+      dot.style.height  = size + 'px';
+      dot.style.opacity = (1 - i / TRAIL_COUNT) * 0.5;
+      document.body.appendChild(dot);
+      trailDots.push({ el: dot, x: 0, y: 0 });
+    }
+
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      cursorEl.style.left = mx + 'px';
+      cursorEl.style.top  = my + 'px';
+    });
+
+    document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+    document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-click'));
+
+    // Hide custom cursor on UI buttons, show real pointer
+    function hideCursor() {
+      cursorEl.style.opacity = '0';
+      cursorRing.style.opacity = '0';
+      trailDots.forEach(d => d.el.style.opacity = '0');
+    }
+    function showCursor() {
+      cursorEl.style.opacity = '1';
+      cursorRing.style.opacity = '1';
+      trailDots.forEach((d, i) => d.el.style.opacity = (1 - i / TRAIL_COUNT) * 0.5);
+    }
+
+    ['music', 'click', 'portfolio-nav-btn', 'portfolio-close'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('mouseenter', hideCursor);
+        el.addEventListener('mouseleave', showCursor);
+      }
+    });
+
+    document.querySelectorAll('.win-btn, .win95-btn, button').forEach(el => {
+      el.addEventListener('mouseenter', hideCursor);
+      el.addEventListener('mouseleave', showCursor);
+    });
+
+    // Hover state on interactive elements
+    const hoverTargets = 'a, .c-node, #portfolio-nav-btn';
+    document.querySelectorAll(hoverTargets).forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+    // Called from three.js on wall hover
+    window.setWallHover = function(active) {
+      document.body.classList.toggle('wall-hover', active);
+      cursorEl.style.opacity   = active ? '0' : '1';
+      cursorRing.style.opacity = active ? '0' : '1';
+      trailDots.forEach((d, i) => d.el.style.opacity = active ? '0' : (1 - i / TRAIL_COUNT) * 0.5);
+    };
+
+    (function animateCursor() {
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+
+      trailDots[0].x += (mx - trailDots[0].x) * 0.35;
+      trailDots[0].y += (my - trailDots[0].y) * 0.35;
+      trailDots[0].el.style.left = trailDots[0].x + 'px';
+      trailDots[0].el.style.top  = trailDots[0].y + 'px';
+
+      for (let i = 1; i < TRAIL_COUNT; i++) {
+        trailDots[i].x += (trailDots[i-1].x - trailDots[i].x) * 0.45;
+        trailDots[i].y += (trailDots[i-1].y - trailDots[i].y) * 0.45;
+        trailDots[i].el.style.left = trailDots[i].x + 'px';
+        trailDots[i].el.style.top  = trailDots[i].y + 'px';
+      }
+      requestAnimationFrame(animateCursor);
+    })();
+  </script>
+
+  <script>
+    // REE (node 0) is the hub — every line runs from the centre out to a brand node.
+    const C_CONNECTIONS = [[0,1],[0,2],[0,3],[0,4],[0,5]];
+    const cPanel = document.getElementById('constellation-panel');
+    const cSvg   = document.getElementById('c-svg');
+
+    function cGetCenter(node) {
+      const nr = node.getBoundingClientRect();
+      const pr = cPanel.getBoundingClientRect();
+      return { x: nr.left - pr.left + nr.width/2, y: nr.top - pr.top + nr.height/2 };
+    }
+
+    function cDrawLines() {
+      const nodes = cPanel.querySelectorAll('.c-node');
+      cSvg.innerHTML = '';
+      const now = Date.now() / 1000;
+      C_CONNECTIONS.forEach(([a, b], i) => {
+        const pa = cGetCenter(nodes[a]), pb = cGetCenter(nodes[b]);
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+        line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+        line.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+        line.setAttribute('stroke-width', '1');
+        cSvg.appendChild(line);
+
+        // A small dot travelling along the line, like a data packet —
+        // staggered per connection so they don't all pulse in lockstep.
+        const cycleSeconds = 2.6;
+        const t = ((now + i * 0.45) % cycleSeconds) / cycleSeconds;
+        const packet = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        packet.setAttribute('cx', pa.x + (pb.x - pa.x) * t);
+        packet.setAttribute('cy', pa.y + (pb.y - pa.y) * t);
+        packet.setAttribute('r', 2);
+        packet.setAttribute('fill', '#39FF14');
+        packet.setAttribute('opacity', '0.85');
+        cSvg.appendChild(packet);
+      });
+    }
+
+    cDrawLines();
+    setInterval(cDrawLines, 50);
+
+    // Hover shows each node's real role, plus a soft blip (spec p.5).
+    const cTooltip = document.getElementById('c-hover-tooltip');
+    cPanel.querySelectorAll('.c-node[data-role]').forEach((node) => {
+      node.addEventListener('mouseenter', () => {
+        const nr = node.getBoundingClientRect();
+        const pr = cPanel.getBoundingClientRect();
+        cTooltip.textContent = node.dataset.role;
+        cTooltip.classList.toggle('pending', node.classList.contains('c-node-pending'));
+        cTooltip.style.left = (nr.left - pr.left + nr.width / 2) + 'px';
+        cTooltip.style.top = (nr.top - pr.top) + 'px';
+        cTooltip.classList.add('visible');
+        if (window.reeosBlip) window.reeosBlip();
+      });
+      node.addEventListener('mouseleave', () => {
+        cTooltip.classList.remove('visible');
+      });
+    });
+  </script>
+  </body>
+</html>

@@ -2,12 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">    
 <title>REE'</title>
+<script>
+  // Device check, before anything renders. Phones (touch + small screen, in
+  // either orientation) get the same 3D room with a compact layout and a
+  // lighter copy of the model; anything without WebGL falls back to the
+  // plain 2D page. three.js and the CSS both read these.
+  (function () {
+    var root = document.documentElement;
+    var phone = matchMedia('(pointer: coarse)').matches &&
+                Math.min(screen.width, screen.height) <= 600;
+    var gl = false;
+    try {
+      var c = document.createElement('canvas');
+      gl = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+    } catch (e) {}
+    if (phone) root.classList.add('phone');
+    if (!gl) root.classList.add('no3d');
+    window.REE_PHONE = phone;
+    window.REE_NO3D = !gl;
+    window.REE_MODEL_URL = phone ? '/room_mobile.glb' : '/room_v2_webp.glb';
+
+    // Start fetching the room straight away instead of after the JS runs.
+    if (gl) {
+      [window.REE_MODEL_URL, '/draco/draco_decoder.wasm'].forEach(function (href) {
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'fetch'; l.crossOrigin = 'anonymous'; l.href = href;
+        document.head.appendChild(l);
+      });
+    }
+  })();
+</script>
   </head>
   <style>
     * { cursor: none !important; }
@@ -27,7 +57,7 @@
     body {
       margin: 0px;
       padding: 0px;
-      background-image: url(./photo_stocks/universe.jpeg);
+      background-image: url(./photo_stocks/universe.webp);
       background-size: cover;
       background-position: center;
       /* background-repeat: no-repeat; */
@@ -132,8 +162,8 @@
      position: fixed;
      right: 14px;
      bottom: 30px;
-     width: 380px;
-     height: 440px;
+     width: 310px;
+     height: 360px;
      z-index: 10;
    }
    .c-title {
@@ -171,7 +201,7 @@
      50%      { transform: translate(-50%,-50%) translateY(-5px); }
    }
    .c-circle {
-     width: 82px; height: 82px;
+     width: 64px; height: 64px;
      border-radius: 50%;
      background: rgba(255,255,255,0.06);
      border: 1px solid rgba(255,255,255,0.22);
@@ -179,7 +209,7 @@
      overflow: hidden;
      transition: all 0.3s;
    }
-   .c-circle img { width: 56px; height: 56px; object-fit: contain; filter: brightness(0.85); transition: filter 0.3s; }
+   .c-circle img { width: 42px; height: 42px; object-fit: contain; filter: brightness(0.85); transition: filter 0.3s; }
    .c-node:hover .c-circle {
      background: rgba(255,255,255,0.14);
      border-color: rgba(255,255,255,0.75);
@@ -199,10 +229,10 @@
    /* Online status dot, pinned near the top-right of each node's circle */
    .c-status-dot {
      position: absolute;
-     top: 10px;
-     left: calc(50% + 26px);
+     top: 8px;
+     left: calc(50% + 21px);
      transform: translate(-50%, -50%);
-     width: 9px; height: 9px;
+     width: 8px; height: 8px;
      border-radius: 50%;
      background: #39FF14;
      box-shadow: 0 0 6px #39FF14;
@@ -235,14 +265,14 @@
 
    /* REE hub node — centre of the network map, stays put (no float) */
    .c-circle-ree {
-     width: 72px; height: 72px;
+     width: 58px; height: 58px;
      border-color: #B388FF;
      background: rgba(179,136,255,0.1);
      box-shadow: 0 0 14px rgba(179,136,255,0.4);
    }
    .c-ree-label {
      font-family: 'Orbitron', sans-serif;
-     font-size: 10px;
+     font-size: 9px;
      letter-spacing: 1px;
      color: #B388FF;
      text-align: center;
@@ -267,24 +297,24 @@
      top: 2.5rem;
      left: 2.5rem;
      z-index: 9;
-     width: 300px;
+     width: 240px;
      background: rgba(10,12,10,0.78);
      border: 1px solid #39FF14;
      box-shadow: 0 0 14px rgba(57,255,20,0.18);
      border-radius: 6px;
-     padding: 14px 18px;
+     padding: 10px 13px;
      font-family: 'Courier New', Courier, monospace;
    }
    #status-bar.visible { display: block; }
    .status-row {
      color: rgba(255,255,255,0.75);
      font-family: 'Courier New', Courier, monospace;
-     font-size: 12px;
+     font-size: 10px;
      letter-spacing: 0;
      font-weight: normal;
      display: flex;
      justify-content: space-between;
-     margin-top: 6px;
+     margin-top: 4px;
    }
    .status-row:first-child { margin-top: 0; }
    .status-online { color: #39FF14; display: flex; align-items: center; gap: 6px; }
@@ -296,17 +326,17 @@
      display: inline-block;
    }
    .status-on { color: #39FF14; }
-   .status-controls { margin-top: 12px; }
+   .status-controls { margin-top: 8px; }
    .status-icon-btn {
      display: inline-flex;
-     width: 2rem; height: 2rem;
+     width: 1.6rem; height: 1.6rem;
      align-items: center; justify-content: center;
      border: 2px solid white;
      background: white;
      border-radius: 5px;
      cursor: pointer;
    }
-   .status-icon-btn img { height: 1.1rem; }
+   .status-icon-btn img { height: 0.9rem; }
    .status-icon-btn.muted { background: rgba(255,255,255,0.3); opacity: 0.5; }
 
    /* Ticket queue — top right */
@@ -316,23 +346,23 @@
      top: 2.5rem;
      right: 2.5rem;
      z-index: 9;
-     width: 360px;
+     width: 290px;
      max-width: calc(100vw - 4rem);
      box-sizing: border-box;
      background: rgba(10,12,10,0.78);
      border: 1px solid #39FF14;
      box-shadow: 0 0 14px rgba(57,255,20,0.18);
      border-radius: 6px;
-     padding: 14px 16px;
+     padding: 11px 13px;
      font-family: 'Courier New', Courier, monospace;
    }
    #ticket-queue-panel.visible { display: block; }
    .tq-title {
      font-family: 'Orbitron', sans-serif;
-     font-size: 10px;
+     font-size: 9px;
      letter-spacing: 2px;
      color: #39FF14;
-     margin-bottom: 10px;
+     margin-bottom: 8px;
    }
    .tq-list {
      display: flex;
@@ -340,11 +370,11 @@
    }
    .tq-row {
      display: grid;
-     grid-template-columns: 44px 1fr auto;
+     grid-template-columns: 38px 1fr auto;
      gap: 8px;
      align-items: baseline;
      font-family: 'Courier New', Courier, monospace;
-     font-size: 11px;
+     font-size: 10px;
      font-weight: normal;
      letter-spacing: 0;
      color: rgba(255,255,255,0.7);
@@ -492,14 +522,15 @@
      #portfolio-nav-btn { bottom: 16px; left: 16px; font-size: 9px; padding: 6px 12px; }
    }
 
-   /* ── Mobile ── */
-   @media (max-width: 480px) {
-     /* Hide 3D canvas and cursor */
-     canvas.cubeCanvas { display: none; }
-     #cursor, #cursor-ring, .trail-dot { display: none; }
-     * { cursor: auto !important; }
+   /* ── No-WebGL fallback ── plain 2D page (the old phone layout). Phones
+      with WebGL get the 3D room and the html.phone rules below instead. */
 
-     body {
+     /* Hide 3D canvas and cursor */
+     html.no3d canvas.cubeCanvas  { display: none; }
+     html.no3d #cursor, html.no3d #cursor-ring, html.no3d .trail-dot  { display: none; }
+     html.no3d *  { cursor: auto !important; }
+
+     html.no3d body  {
        overflow-y: auto;
        height: auto;
        min-height: 100vh;
@@ -508,18 +539,18 @@
      }
 
      /* Full-screen mobile hero layout */
-     .left_details {
+     html.no3d .left_details  {
        position: relative;
        margin: 0;
        padding: 48px 24px 20px;
        width: 100%;
      }
-     #name { font-size: 2.4rem; letter-spacing: 4px; }
-     .left_details div { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
-     #mu_cl { margin-top: 16px; }
+     html.no3d #name  { font-size: 2.4rem; letter-spacing: 4px; }
+     html.no3d .left_details div  { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+     html.no3d #mu_cl  { margin-top: 16px; }
 
      /* Right titles: reposition below left details */
-     .right_details {
+     html.no3d .right_details  {
        position: relative;
        right: auto;
        margin: 0;
@@ -527,10 +558,10 @@
        align-items: flex-start;
        width: 100%;
      }
-     .right_details div { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
+     html.no3d .right_details div  { font-size: 11px; letter-spacing: 2px; margin-top: 6px; }
 
      /* Constellation panel: full-width grid below */
-     #constellation-panel {
+     html.no3d #constellation-panel  {
        position: relative;
        right: auto;
        bottom: auto;
@@ -538,7 +569,7 @@
        height: auto;
        padding: 16px 24px 24px;
      }
-     .c-title {
+     html.no3d .c-title  {
        display: block;
        text-align: left;
        font-size: 9px;
@@ -546,14 +577,14 @@
        margin-bottom: 16px;
        padding: 0;
      }
-     #c-svg { display: none; }
+     html.no3d #c-svg  { display: none; }
 
      /* REE hub node is a desktop hub-map concept — mobile keeps its plain brand grid */
-     #c-node-ree { display: none; }
-     .c-status-dot, .c-hover-tooltip { display: none; }
+     html.no3d #c-node-ree  { display: none; }
+     html.no3d .c-status-dot, html.no3d .c-hover-tooltip  { display: none; }
 
      /* Grid layout for brand nodes */
-     .c-node {
+     html.no3d .c-node  {
        position: relative !important;
        left: auto !important;
        top: auto !important;
@@ -565,29 +596,29 @@
        margin: 8px;
      }
      /* Wrap nodes in a flex grid */
-     #constellation-panel {
+     html.no3d #constellation-panel  {
        display: flex;
        flex-direction: column;
      }
-     #constellation-panel > .c-node {
+     html.no3d #constellation-panel > .c-node  {
        display: inline-flex;
      }
-     .mobile-brands-grid {
+     html.no3d .mobile-brands-grid  {
        display: flex;
        flex-wrap: wrap;
        justify-content: center;
        gap: 12px;
      }
-     .c-circle { width: 60px; height: 60px; }
-     .c-circle img { width: 40px; height: 40px; }
-     .c-label {
+     html.no3d .c-circle  { width: 60px; height: 60px; }
+     html.no3d .c-circle img  { width: 40px; height: 40px; }
+     html.no3d .c-label  {
        color: rgba(255,255,255,0.55) !important;
        font-size: 9px;
        display: block;
      }
 
      /* Portfolio button — big and centered */
-     #portfolio-nav-btn {
+     html.no3d #portfolio-nav-btn  {
        position: relative;
        bottom: auto;
        left: auto;
@@ -601,10 +632,178 @@
      }
 
      /* Portfolio overlay full-screen */
-     #portfolio-window { width: 100vw; height: 100vh; border: none; }
+     html.no3d #portfolio-window  { width: 100vw; height: 100vh; border: none; }
 
      /* Show disclaimer */
-     #mobile-disclaimer { display: block !important; }
+     html.no3d #mobile-disclaimer  { display: block !important; }
+
+
+   /* Touch screens have no pointer to follow — drop the custom cursor. */
+   @media (hover: none) {
+     #cursor, #cursor-ring, .trail-dot { display: none !important; }
+   }
+
+   /* ── Phone (3D) ── same room as desktop, compact HUD around it.
+      Portrait: status + tickets on top, room in the middle, network map
+      and Portfolio button underneath. Landscape: the desktop corners,
+      shrunk. html.phone is set in <head> (touch + small screen). */
+   html.phone, html.phone body {
+     height: 100%;
+     overflow: hidden;
+     overscroll-behavior: none;
+     -webkit-tap-highlight-color: transparent;
+   }
+
+   /* Boot terminal */
+   html.phone .header { font-size: 0.85rem; padding: calc(env(safe-area-inset-top) + 8px) 12px 8px; }
+   html.phone .body { font-size: 11.5px; line-height: 18px; margin: 12px; }
+   /* The terminal's wide Orbitron tracking would wrap every check line on a phone */
+   html.phone #code-lines { font-size: 10px; letter-spacing: 0.5px; }
+   html.phone #code-lines div { font-size: 10px; }
+
+   /* Login */
+   html.phone #login-screen {
+     gap: 14px;
+     padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+     overflow-y: auto;
+     justify-content: safe center;
+     box-sizing: border-box;
+   }
+   html.phone .login-row { gap: 14px; }
+   html.phone .login-card { width: min(300px, calc(100vw - 32px)); padding: 16px 18px; }
+   html.phone .login-username { font-size: 18px; margin-bottom: 10px; }
+   html.phone .login-field { font-size: 12px; }
+   html.phone .ticket-card { width: min(624px, calc(100vw - 32px)); max-width: none; }
+   html.phone .login-ticket-lines { font-size: 10.5px; line-height: 18px; white-space: pre-wrap; }
+
+   /* Status bar — slim strip along the top, music button on its right */
+   html.phone #status-bar {
+     top: calc(env(safe-area-inset-top) + 10px);
+     left: 12px; right: 12px;
+     width: auto;
+     box-sizing: border-box;
+     padding: 8px 52px 8px 12px;
+   }
+   html.phone .status-row { font-size: 9px; margin-top: 3px; }
+   html.phone .status-row:first-child { margin-top: 0; }
+   html.phone #status-bar .status-row:nth-child(2) { display: none; } /* location is on the login card */
+   html.phone .status-controls {
+     position: absolute;
+     right: 10px; top: 50%;
+     transform: translateY(-50%);
+     margin: 0;
+   }
+
+   /* Ticket queue — under the status strip, two rows */
+   html.phone #ticket-queue-panel {
+     top: calc(env(safe-area-inset-top) + 75px);
+     left: 12px; right: 12px;
+     width: auto; max-width: none;
+     padding: 8px 12px;
+   }
+   html.phone .tq-title { font-size: 8px; margin-bottom: 4px; }
+   html.phone .tq-row { font-size: 9px; margin-top: 4px; grid-template-columns: 34px 1fr auto; }
+
+   /* Network map — mini hub along the bottom */
+   html.phone #constellation-panel {
+     left: 12px; right: 12px;
+     width: auto;
+     height: 150px;
+     bottom: calc(env(safe-area-inset-bottom) + 58px);
+   }
+   html.phone .c-title { font-size: 8px; letter-spacing: 2px; padding-top: 0; }
+   html.phone .c-circle { width: 40px; height: 40px; }
+   html.phone .c-circle img { width: 28px; height: 28px; }
+   html.phone .c-circle-ree { width: 38px; height: 38px; }
+   html.phone .c-ree-label { font-size: 7px; }
+   html.phone .c-label { display: none; }
+   html.phone .c-status-dot { top: 6px; left: calc(50% + 14px); width: 6px; height: 6px; }
+   /* Nodes sit on an ellipse round the hub so nothing crowds the title */
+   html.phone #c-node-ree           { left: 50% !important;   top: 54% !important; }
+   html.phone .c-node[data-id="0"]  { left: 27.6% !important; top: 31% !important; }
+   html.phone .c-node[data-id="2"]  { left: 72.4% !important; top: 31% !important; }
+   html.phone .c-node[data-id="1"]  { left: 13% !important;   top: 62% !important; }
+   html.phone .c-node[data-id="4"]  { left: 87% !important;   top: 62% !important; }
+   html.phone .c-node[data-id="3"]  { left: 50% !important;   top: 89% !important; }
+   /* A tap shows the role pinned above the map, so edge nodes can't push it off-screen */
+   html.phone .c-hover-tooltip {
+     left: 50% !important; top: 0 !important;
+     transform: translate(-50%, -115%);
+     font-size: 10px;
+   }
+
+   /* Portfolio — full-width, thumb-sized */
+   html.phone #portfolio-nav-btn {
+     left: 12px; right: 12px;
+     bottom: calc(env(safe-area-inset-bottom) + 12px);
+     padding: 11px 0;
+     font-size: 10px;
+     text-align: center;
+     background: rgba(0,0,0,0.45);
+   }
+
+   html.phone #screen-back-btn {
+     bottom: calc(env(safe-area-inset-bottom) + 24px);
+     padding: 13px 34px;
+     font-size: 11px;
+   }
+   html.phone #screen-back-btn .back-hint { display: none; }
+
+   html.phone #portfolio-window { width: 100vw; height: 100vh; height: 100dvh; border: none; box-shadow: none; }
+   html.phone #portfolio-titlebar { padding-top: calc(env(safe-area-inset-top) + 6px); }
+   html.phone #portfolio-close { width: 34px; height: 28px; font-size: 14px; }
+
+   /* "Best on a laptop" — a quiet one-off note, not a wall */
+   #phone-toast {
+     display: none;
+     position: fixed;
+     left: 50%;
+     top: calc(env(safe-area-inset-top) + 152px);
+     transform: translate(-50%, -6px);
+     z-index: 15;
+     width: max-content;
+     max-width: calc(100vw - 32px);
+     box-sizing: border-box;
+     background: rgba(10,12,10,0.9);
+     border: 1px solid #B388FF;
+     box-shadow: 0 0 14px rgba(179,136,255,0.3);
+     border-radius: 18px;
+     padding: 8px 14px;
+     color: rgba(255,255,255,0.88);
+     font-family: 'Courier New', Courier, monospace;
+     font-size: 11px;
+     font-weight: normal;
+     letter-spacing: 0;
+     text-align: center;
+     opacity: 0;
+     transition: opacity 0.4s ease, transform 0.4s ease;
+   }
+   #phone-toast.shown { display: block; }
+   #phone-toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+   /* Phone on its side — back to the desktop corners, compact */
+   @media (orientation: landscape) {
+     html.phone #status-bar {
+       top: 10px; left: calc(env(safe-area-inset-left) + 12px); right: auto;
+       width: 280px;
+     }
+     html.phone #ticket-queue-panel {
+       top: 10px; right: calc(env(safe-area-inset-right) + 12px); left: auto;
+       width: 250px;
+     }
+     html.phone #constellation-panel {
+       left: auto; right: calc(env(safe-area-inset-right) + 12px);
+       width: 250px; height: 150px;
+       bottom: 10px;
+     }
+     html.phone #portfolio-nav-btn {
+       left: calc(env(safe-area-inset-left) + 12px); right: auto;
+       bottom: 12px;
+       padding: 9px 18px;
+     }
+     html.phone #screen-back-btn { bottom: 16px; }
+     html.phone .body { line-height: 14px; }
+     html.phone #phone-toast { top: auto; bottom: 14px; }
    }
   </style>
   <body>
@@ -612,7 +811,7 @@
 
     <!-- Room music. Not autoplay: it starts when the visitor enters the room,
          which is a click, so the browser lets it through. -->
-    <audio id="room-music" loop preload="auto">
+    <audio id="room-music" loop preload="none">
       <source src="/Billie%20Eilish%20-%20CHIHIRO%20(Lyrics).mp3" type="audio/mpeg">
     </audio>
 
@@ -701,7 +900,7 @@
 
 
 
-    <button id="portfolio-nav-btn" onclick="if(window.innerWidth<=480){window.location.href='/portfolio.html'}else{window.goToWall&&window.goToWall()}">PORTFOLIO</button>
+    <button id="portfolio-nav-btn" onclick="if(window.REE_NO3D){window.location.href='/portfolio.html'}else{window.goToWall&&window.goToWall()}">PORTFOLIO</button>
     <div id="mobile-disclaimer" style="display:none;text-align:center;color:rgba(255,255,255,0.25);font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:0 24px 24px;">⚠ BEST EXPERIENCED ON DESKTOP</div>
 
     <!-- Portfolio overlay popup -->
@@ -721,14 +920,15 @@
     <!-- Played straight onto the left tablet's mesh as a video texture, so it
          lives in the 3D scene rather than floating over it. Muted so it can
          autoplay and so it never fights the room music. -->
-    <video id="tablet-video" loop muted playsinline preload="auto">
+    <video id="tablet-video" loop muted playsinline preload="none">
       <source src="/Video%20Project%2038.mp4" type="video/mp4">
     </video>
+    <div id="phone-toast">💻 Best on a laptop, but feel free to explore</div>
     <button id="screen-back-btn">← BACK <span class="back-hint">(ESC)</span></button>
 
     <canvas class="cubeCanvas"></canvas>
     <script>
-      if (window.innerWidth <= 480) {
+      if (window.REE_NO3D) {
         document.getElementById('loading-terminal').style.display = 'none';
       }
     </script>

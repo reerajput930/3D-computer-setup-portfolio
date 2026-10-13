@@ -1,16 +1,23 @@
 import * as THREE from 'three'
-import { ThreeMFLoader } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { AxesHelper } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { LoadingManager } from 'three'
 
-if (window.innerWidth <= 480) {
-  // Mobile: expose dummy goToWall so PORTFOLIO button doesn't error, then stop
+if (window.REE_NO3D) {
+  // No WebGL: the page falls back to its plain 2D layout. Expose a dummy
+  // goToWall so the PORTFOLIO button doesn't error, then stop.
   window.goToWall = () => {};
-  throw new Error('mobile');
+  throw new Error('no WebGL');
 }
+
+// Set in index.html's <head>: touch + small screen. Phones run the same room
+// with a lighter model, cheaper render settings and a compact HUD.
+const IS_PHONE = !!window.REE_PHONE;
+// No hover on touch screens — a tap fires a fake mousemove first, which
+// would trip the hover previews and leave the camera parked in one.
+const IS_TOUCH = window.matchMedia('(hover: none)').matches;
 
 const loadingManager = new THREE.LoadingManager();
 
@@ -26,7 +33,7 @@ const camera = new THREE.PerspectiveCamera(
   window.innerWidth / window.innerHeight,
   0.01,
   1000)
-camera.position.z = 3.4   // opening view; minDistance below is the floor
+camera.position.z = 6     // opening view; minDistance below is the floor
 // camera.position.x= -.5
 
 // selector query
@@ -205,6 +212,12 @@ let modelLoaded = false;
 // Call this when your real loading is 100% done (e.g. from LoadingManager.onLoad)
 function finishLoading() {
   modelLoaded = true;
+  // Video and music are held back (preload="none") so they don't eat the
+  // room's bandwidth on slow networks — start them now, while the login
+  // screen is up, so they're buffered by the time the visitor walks in.
+  roomMusic.preload = 'auto';
+  roomMusic.load();
+  playTabletVideo();
   bootSequenceDone.then(() => {
     if (!modelLoaded) return;
     terminal.style.display = 'none';
@@ -245,6 +258,25 @@ function showRoomCorners() {
   ticketQueuePanel.classList.add('visible');
   if (networkMapPanel) networkMapPanel.style.display = '';
   runTicketQueueLoop();
+  if (IS_PHONE) showPhoneToast();
+}
+
+// One quiet note on phones that the full experience is on a laptop. Fades
+// out on its own, or on a tap anywhere.
+function showPhoneToast() {
+  const toast = document.getElementById('phone-toast');
+  if (!toast) return;
+  toast.classList.add('shown');
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('visible')));
+  const hide = () => {
+    toast.classList.remove('visible');
+    setTimeout(() => toast.classList.remove('shown'), 450);
+    clearTimeout(timer);
+    window.removeEventListener('pointerdown', hide);
+  };
+  const timer = setTimeout(hide, 6000);
+  // Give the tap that opened the door time to finish, so it can't also close the note.
+  setTimeout(() => window.addEventListener('pointerdown', hide), 800);
 }
 
 // ───────────────────────────────────────────────
@@ -271,7 +303,9 @@ const TICKET_POOL = [
 
 const tqList = document.getElementById('tq-list');
 const tqClosedCountEl = document.getElementById('tq-closed-count');
-const TQ_MAX_VISIBLE = 3;
+const TQ_MAX_VISIBLE = IS_PHONE ? 2 : 3;
+// Phones only have room for two rows; drop the oldest of the starting three.
+if (IS_PHONE) tqList.querySelector('.tq-row').remove();
 let tqClosedCount = 2;
 let tqNextTicketNumber = 1045;
 let tqPoolIndex = 0;
@@ -824,7 +858,8 @@ function drawReeOS() {
 // bails early while a screen is focused.
 // ───────────────────────────────────────────────
 const pointerNdc = new THREE.Vector2();
-window.addEventListener('mousemove', (e) => {
+// pointermove rather than mousemove so it follows a finger on phones too.
+window.addEventListener('pointermove', (e) => {
   pointerNdc.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointerNdc.y = -(e.clientY / window.innerHeight) * 2 + 1;
 });
@@ -974,7 +1009,6 @@ function playTabletVideo() {
     document.body.addEventListener('click', playTabletVideo, { once: true });
   });
 }
-playTabletVideo();
 
 // Scales the UVs so the video fills the screen and the overflow is cropped,
 // rather than letterboxed: with clamped wrapping, sampling outside 0..1
@@ -1042,7 +1076,7 @@ const loader = new GLTFLoader(loadingManager)
 
 // draco for loading
 const dracoLoader = new DRACOLoader(loadingManager);
-dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/'); 
+dracoLoader.setDecoderPath('/draco/'); // self-hosted: saves a connection to another domain
 loader.setDRACOLoader(dracoLoader);
 // declaring globally
 let object;
@@ -1219,7 +1253,11 @@ const CAM_LERP_RETURN = 0.22;
 // While zoomed in, the room's own HUD gets out of the way and the browser's
 // normal arrow comes back — the custom dot cursor is hard to aim with when
 // you're reading a screen.
-const zoomUiPanels = [document.getElementById('constellation-panel')].filter(Boolean);
+// Phones have no spare screen, so the whole HUD steps aside there.
+const zoomUiPanels = [
+  'constellation-panel',
+  ...(IS_PHONE ? ['status-bar', 'ticket-queue-panel', 'portfolio-nav-btn'] : []),
+].map((id) => document.getElementById(id)).filter(Boolean);
 function setZoomedUI(on) {
   document.body.classList.toggle('native-cursor', on);
   // A class, not an inline style: the network map's own display is already
@@ -1459,10 +1497,48 @@ window.goToWall = function() {
     viewSaved = false;
   }
   logAccess('Moved to the portfolio wall');
-  flyCameraTo(wallCamDest, wallTargetDest);
+  // On a phone the wall is too small to tap comfortably — open it on arrival.
+  flyCameraTo(wallCamDest, wallTargetDest, IS_PHONE ? () => openPortfolio(null) : null);
 };
 
-const url = '/room_v2_webp.glb'
+// Share of the screen width / height the room may fill on load
+const OPENING_FILL_X = 0.85;
+const OPENING_FILL_Y = 1.2;
+// Portrait phones: the room gets the full width, and the band between the
+// top panels and the network map. On its side, the space between the corners.
+const PHONE_PORTRAIT_FILL = { x: 1.8, y: 1.0 };
+const PHONE_LANDSCAPE_FILL = { x: 1.0, y: 1.25 };
+
+function openingFill() {
+  if (!IS_PHONE) return { x: OPENING_FILL_X, y: OPENING_FILL_Y };
+  return camera.aspect < 1 ? PHONE_PORTRAIT_FILL : PHONE_LANDSCAPE_FILL;
+}
+
+function fitOpeningView() {
+  const sphere = new THREE.Box3().setFromObject(object).getBoundingSphere(new THREE.Sphere());
+  // Sphere radius plus its offset from the orbit target, so it stays covered as the camera orbits
+  const radius = sphere.radius + sphere.center.distanceTo(controls.target);
+  const tanHalfV = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+  const tanHalfH = tanHalfV * camera.aspect;
+  const fill = openingFill();
+  const dist = Math.max(
+    radius / (tanHalfH * fill.x),
+    radius / (tanHalfV * fill.y)
+  );
+  controls.maxDistance = Math.max(controls.maxDistance, dist + 2);
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  // Portrait phones: the free band between the top panels and the network
+  // map sits above the screen's middle, so aim a little low to lift the room
+  // about 6% of the screen height into it.
+  const lift = IS_PHONE && camera.aspect < 1 ? 0.06 * 2 * dist * tanHalfV : 0;
+  controls.target.set(0, -lift, 0);
+  camera.position.copy(controls.target).addScaledVector(dir, dist);
+}
+
+// Phones load a copy with textures capped (colour 1024px, surface maps
+// 512px) — the full set needs ~1.2 GB of GPU memory, which iOS Safari won't
+// give a tab. Same meshes and names, so everything below works unchanged.
+const url = window.REE_MODEL_URL || '/room_v2_webp.glb'
 // load the item in three.js
 loader.load(url, (gltf) => {
     object = gltf.scene
@@ -1483,6 +1559,11 @@ loader.load(url, (gltf) => {
     object.traverse((child) => {
       if (child.isMesh) child.frustumCulled = false;
     });
+
+    // Opening view: back the camera off until the whole room (from any
+    // auto-rotate angle) fits in the middle of the screen, clear of the HUD
+    // panels on the left and right.
+    fitOpeningView();
 
     tabletLeftScreen = object.getObjectByName('Tablet_Left_Screen');
     tabletRightScreen = object.getObjectByName('Tablet_Right_Screen');
@@ -1701,11 +1782,19 @@ if (progress.lengthComputable) {
 })
 
 // for window change flexibility
+let wasPortrait = window.innerHeight > window.innerWidth;
 window.addEventListener("resize",()=>{
   renderer.setSize(window.innerWidth, window.innerHeight)
   camera.aspect = window.innerWidth/window.innerHeight
   camera.updateProjectionMatrix()
 
+  // A phone turning on its side wants a different framing. Only on an actual
+  // flip — iOS also fires resize as the URL bar slides, mid-gesture.
+  const portrait = window.innerHeight > window.innerWidth;
+  if (IS_PHONE && portrait !== wasPortrait && object && !orbitLocked && !camAnim.active) {
+    fitOpeningView();
+  }
+  wasPortrait = portrait;
 })
 
 // adding light
@@ -1759,10 +1848,16 @@ setTimeout(()=>{
  
 
 // after loading the item, time to show on browser with render 
-const renderer = new THREE.WebGLRenderer({canvas:canva,alpha:true, antialias:true})
+// Phones render at up to 2x for a crisp retina image; at that density the
+// edge smoothing isn't visible, so it's skipped there to spare the GPU.
+const renderer = new THREE.WebGLRenderer({canvas:canva,alpha:true, antialias:!IS_PHONE})
 const width = window.innerWidth   // 50% of window width
 const height = window.innerHeight // 50% of window height
 renderer.setSize(width, height)
+// After setSize: setPixelRatio resizes the drawing buffer without touching
+// the CSS size, so called first it would stretch the unsized canvas (and the
+// whole mobile layout viewport) to 300 x pixel-ratio wide.
+if (IS_PHONE) renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
 
 
    
@@ -1887,6 +1982,7 @@ function clearPreviewTimers() {
 }
 
 canva.addEventListener('mousemove', (e) => {
+  if (IS_TOUCH) return;
   if (focusedScreen || focusBusy) return;
   if (!wallPlaneMesh) return;
   setPointerFromEvent(e);
